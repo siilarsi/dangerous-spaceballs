@@ -57,6 +57,14 @@
             height: 100%;
             background: orange;
         }
+        #ammo-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -68,6 +76,7 @@
     </div>
     <div id="game"></div>
     <div id="fuel-container"><div id="fuel-bar"></div></div>
+    <div id="ammo-container">Ammo: <span id="ammo-count">0</span></div>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
     <script>
         function startGame() {
@@ -85,6 +94,7 @@
 
             const game = new Phaser.Game(config);
             document.getElementById('fuel-container').style.display = 'block';
+            document.getElementById('ammo-container').style.display = 'block';
 
             window.addEventListener('resize', function () {
                 game.scale.resize(window.innerWidth, window.innerHeight);
@@ -98,22 +108,35 @@
 
                 this.velocity = new Phaser.Math.Vector2(0, 0);
                 this.isBoosting = false;
+                this.isFiring = false;
                 this.fuel = 100;
+                this.ammo = 50;
+                this.fireRate = 100;
+                this.lastFired = 0;
+                this.bullets = [];
 
                 // Flame effect for boosting
                 this.flame = this.add.triangle(0, 0, 0, 0, 5, 15, -5, 15, 0xffa500);
                 this.flame.setOrigin(0.5, 0.5);
                 this.flame.visible = false;
 
+                document.getElementById('ammo-count').textContent = this.ammo;
+
                 this.input.mouse.disableContextMenu();
 
                 this.input.on('pointerdown', pointer => {
+                    if (pointer.button === 0 && this.ammo > 0) {
+                        this.isFiring = true;
+                    }
                     if (pointer.button === 2 && this.fuel > 0) {
                         this.isBoosting = true;
                     }
                 });
 
                 this.input.on('pointerup', pointer => {
+                    if (pointer.button === 0) {
+                        this.isFiring = false;
+                    }
                     if (pointer.button === 2) {
                         this.isBoosting = false;
                     }
@@ -130,6 +153,7 @@
                     this.reticle.x = pointer.x;
                     this.reticle.y = pointer.y;
                 });
+
             }
 
             function update(time, delta) {
@@ -149,6 +173,15 @@
                 const deltaSeconds = delta / 1000;
                 const noseAngle = this.ship.rotation - Math.PI / 2;
 
+                if (this.isFiring && this.ammo > 0 && time > this.lastFired + this.fireRate) {
+                    const angle = Phaser.Math.Angle.Between(this.ship.x, this.ship.y, this.reticle.x, this.reticle.y);
+                    const bullet = this.add.rectangle(this.ship.x, this.ship.y, 4, 2, 0xff0000);
+                    const speed = 600;
+                    this.bullets.push({ sprite: bullet, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed });
+                    this.lastFired = time;
+                    this.ammo -= 1;
+                }
+
                 if (this.isBoosting && this.fuel > 0) {
                     const accel = 300;
                     this.velocity.x += Math.cos(noseAngle) * accel * deltaSeconds;
@@ -167,6 +200,16 @@
                     this.flame.y = this.ship.y - Math.sin(noseAngle) * 20;
                 }
 
+                for (let i = this.bullets.length - 1; i >= 0; i--) {
+                    const b = this.bullets[i];
+                    b.sprite.x += b.vx * deltaSeconds;
+                    b.sprite.y += b.vy * deltaSeconds;
+                    if (b.sprite.x < 0 || b.sprite.x > this.scale.width || b.sprite.y < 0 || b.sprite.y > this.scale.height) {
+                        b.sprite.destroy();
+                        this.bullets.splice(i, 1);
+                    }
+                }
+
                 this.ship.x += this.velocity.x * deltaSeconds;
                 this.ship.y += this.velocity.y * deltaSeconds;
                 this.velocity.scale(0.99);
@@ -179,6 +222,7 @@
                 if (this.ship.y > height) this.ship.y = 0;
 
                 document.getElementById('fuel-bar').style.width = this.fuel + '%';
+                document.getElementById('ammo-count').textContent = this.ammo;
             }
         }
 
