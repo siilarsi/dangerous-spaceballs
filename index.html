@@ -306,6 +306,7 @@
 
                 for (let i = this.orbs.length - 1; i >= 0; i--) {
                     const o = this.orbs[i];
+                    const radius = o.radius;
                     if (o.growing) {
                         const progress = Math.min(1, (time - o.spawnTime) / this.orbGrowthDuration);
                         o.sprite.setScale(progress);
@@ -316,7 +317,6 @@
                         o.sprite.x += o.vx * deltaSeconds;
                         o.sprite.y += o.vy * deltaSeconds;
 
-                        const radius = o.radius;
                         if (o.sprite.x - radius <= 0 && o.vx < 0) {
                             o.vx *= -1;
                             o.sprite.x = radius;
