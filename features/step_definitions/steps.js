@@ -133,3 +133,23 @@ Then('the streak text {string} should appear', async text => {
     return window.gameScene.floatingTexts.some(ft => ft.sprite.text === t);
   }, text);
 });
+
+When('I wait for {int} ms', async ms => {
+  await page.waitForTimeout(ms);
+});
+
+Then('the level banner should show {string}', async text => {
+  await page.waitForFunction(t => {
+    const el = document.getElementById('level-banner');
+    if (!el) return false;
+    const style = getComputedStyle(el);
+    return el.textContent === t && parseFloat(style.opacity) > 0;
+  }, text);
+});
+
+Then('the level should be {int}', async expected => {
+  const val = await page.evaluate(() => window.gameScene.level);
+  if (val !== expected) {
+    throw new Error(`Expected level ${expected} but got ${val}`);
+  }
+});
