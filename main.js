@@ -63,6 +63,37 @@
                 this.nextOrbSpawn = 0;
                 this.orbSpawnRate = 3000; // milliseconds
                 this.orbGrowthDuration = 500;
+                this.orbSpeedMultiplier = 1;
+
+                this.level = 1;
+                this.nextLevelTime = this.time.now + 15000;
+                this.levelBanner = document.getElementById('level-banner');
+                this.showLevelBanner = level => {
+                    this.levelBanner.textContent = `Level ${level}`;
+                    this.levelBanner.style.opacity = '1';
+                    setTimeout(() => {
+                        this.levelBanner.style.opacity = '0';
+                    }, 2000);
+                };
+                this.showLevelBanner(1);
+
+                this.spawnOrb = (color, t) => {
+                    const x = Phaser.Math.Between(0, this.scale.width);
+                    const y = Phaser.Math.Between(0, this.scale.height);
+                    const radius = 10;
+                    const orb = this.add.circle(x, y, radius, color);
+                    orb.setScale(0);
+                    const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
+                    const speed = 50 * this.orbSpeedMultiplier;
+                    this.orbs.push({
+                        sprite: orb,
+                        radius: radius,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        spawnTime: t,
+                        growing: true
+                    });
+                };
 
                 // Flame effect for boosting
                 this.flame = this.add.triangle(0, 0, 0, 0, 5, 15, -5, 15, 0xffa500);
@@ -225,23 +256,21 @@
                     this.nextPowerUpSpawn = time + this.powerUpSpawnRate;
                 }
 
+                if (time > this.nextLevelTime) {
+                    this.level += 1;
+                    this.nextLevelTime += 15000;
+                    this.orbSpeedMultiplier *= 1.2;
+                    for (const o of this.orbs) {
+                        o.vx *= 1.2;
+                        o.vy *= 1.2;
+                    }
+                    this.spawnOrb(0x0000ff, time);
+                    this.showLevelBanner(this.level);
+                }
+
                 if (time > this.nextOrbSpawn) {
-                    const x = Phaser.Math.Between(0, this.scale.width);
-                    const y = Phaser.Math.Between(0, this.scale.height);
                     const color = Math.random() < 0.5 ? 0xff0000 : 0x0000ff;
-                    const radius = 10;
-                    const orb = this.add.circle(x, y, radius, color);
-                    orb.setScale(0);
-                    const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
-                    const speed = 50;
-                    this.orbs.push({
-                        sprite: orb,
-                        radius: radius,
-                        vx: Math.cos(angle) * speed,
-                        vy: Math.sin(angle) * speed,
-                        spawnTime: time,
-                        growing: true
-                    });
+                    this.spawnOrb(color, time);
                     this.nextOrbSpawn = time + this.orbSpawnRate;
                 }
 
