@@ -220,12 +220,14 @@
                     const x = Phaser.Math.Between(0, this.scale.width);
                     const y = Phaser.Math.Between(0, this.scale.height);
                     const color = Math.random() < 0.5 ? 0xff0000 : 0x0000ff;
-                    const orb = this.add.circle(x, y, 10, color);
+                    const radius = 10;
+                    const orb = this.add.circle(x, y, radius, color);
                     orb.setScale(0);
                     const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
                     const speed = 50;
                     this.orbs.push({
                         sprite: orb,
+                        radius: radius,
                         vx: Math.cos(angle) * speed,
                         vy: Math.sin(angle) * speed,
                         spawnTime: time,
@@ -245,9 +247,21 @@
                     } else {
                         o.sprite.x += o.vx * deltaSeconds;
                         o.sprite.y += o.vy * deltaSeconds;
-                        if (o.sprite.x < -20 || o.sprite.x > this.scale.width + 20 || o.sprite.y < -20 || o.sprite.y > this.scale.height + 20) {
-                            o.sprite.destroy();
-                            this.orbs.splice(i, 1);
+
+                        const radius = o.radius;
+                        if (o.sprite.x - radius <= 0 && o.vx < 0) {
+                            o.vx *= -1;
+                            o.sprite.x = radius;
+                        } else if (o.sprite.x + radius >= this.scale.width && o.vx > 0) {
+                            o.vx *= -1;
+                            o.sprite.x = this.scale.width - radius;
+                        }
+                        if (o.sprite.y - radius <= 0 && o.vy < 0) {
+                            o.vy *= -1;
+                            o.sprite.y = radius;
+                        } else if (o.sprite.y + radius >= this.scale.height && o.vy > 0) {
+                            o.vy *= -1;
+                            o.sprite.y = this.scale.height - radius;
                         }
                     }
                 }
