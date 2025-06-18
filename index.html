@@ -43,6 +43,20 @@
             height: 100vh;
             display: none;
         }
+        #fuel-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 100px;
+            height: 10px;
+            border: 2px solid #fff;
+            display: none;
+        }
+        #fuel-bar {
+            width: 100%;
+            height: 100%;
+            background: orange;
+        }
     </style>
 </head>
 <body>
@@ -53,6 +67,7 @@
         <img src="images/promo_animated.webp" alt="Promo Animation">
     </div>
     <div id="game"></div>
+    <div id="fuel-container"><div id="fuel-bar"></div></div>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
     <script>
         function startGame() {
@@ -69,6 +84,7 @@
             };
 
             const game = new Phaser.Game(config);
+            document.getElementById('fuel-container').style.display = 'block';
 
             window.addEventListener('resize', function () {
                 game.scale.resize(window.innerWidth, window.innerHeight);
@@ -79,6 +95,29 @@
                 const shipPoints = [0, -20, 15, 20, -15, 20];
                 this.ship = this.add.polygon(400, 300, shipPoints, 0xffffff);
                 this.ship.setOrigin(0.5, 0.5);
+
+                this.velocity = new Phaser.Math.Vector2(0, 0);
+                this.isBoosting = false;
+                this.fuel = 100;
+
+                // Flame effect for boosting
+                this.flame = this.add.triangle(0, 0, 0, 0, 5, 15, -5, 15, 0xffa500);
+                this.flame.setOrigin(0.5, 0.5);
+                this.flame.visible = false;
+
+                this.input.mouse.disableContextMenu();
+
+                this.input.on('pointerdown', pointer => {
+                    if (pointer.button === 2 && this.fuel > 0) {
+                        this.isBoosting = true;
+                    }
+                });
+
+                this.input.on('pointerup', pointer => {
+                    if (pointer.button === 2) {
+                        this.isBoosting = false;
+                    }
+                });
 
                 // Reticle that follows the pointer
                 this.reticle = this.add.graphics({ x: 400, y: 300 });
@@ -93,7 +132,7 @@
                 });
             }
 
-            function update() {
+            function update(time, delta) {
                 // Smoothly rotate the ship to face the pointer
                 const targetAngle = Phaser.Math.Angle.Between(
                     this.ship.x,
@@ -106,6 +145,40 @@
                     targetAngle + Math.PI / 2,
                     0.05
                 );
+
+                const deltaSeconds = delta / 1000;
+                const noseAngle = this.ship.rotation - Math.PI / 2;
+
+                if (this.isBoosting && this.fuel > 0) {
+                    const accel = 300;
+                    this.velocity.x += Math.cos(noseAngle) * accel * deltaSeconds;
+                    this.velocity.y += Math.sin(noseAngle) * accel * deltaSeconds;
+                    this.fuel -= 20 * deltaSeconds;
+                    if (this.fuel < 0) {
+                        this.fuel = 0;
+                        this.isBoosting = false;
+                    }
+                }
+
+                this.flame.visible = this.isBoosting && this.fuel > 0;
+                if (this.flame.visible) {
+                    this.flame.rotation = this.ship.rotation;
+                    this.flame.x = this.ship.x - Math.cos(noseAngle) * 20;
+                    this.flame.y = this.ship.y - Math.sin(noseAngle) * 20;
+                }
+
+                this.ship.x += this.velocity.x * deltaSeconds;
+                this.ship.y += this.velocity.y * deltaSeconds;
+                this.velocity.scale(0.99);
+
+                const width = this.scale.width;
+                const height = this.scale.height;
+                if (this.ship.x < 0) this.ship.x = width;
+                if (this.ship.x > width) this.ship.x = 0;
+                if (this.ship.y < 0) this.ship.y = height;
+                if (this.ship.y > height) this.ship.y = 0;
+
+                document.getElementById('fuel-bar').style.width = this.fuel + '%';
             }
         }
 
