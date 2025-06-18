@@ -14,3 +14,18 @@ loads this file rather than using a CDN.
 - Power-up pickups occasionally appear to refill ammo, fuel or time with a +15 indicator.
 
 This project is automatically deployed to **GitHub Pages** whenever changes are merged to the `main` branch. The deployment workflow lives at `.github/workflows/deploy.yml` and publishes the root directory to the `gh-pages` branch using the `peaceiris/actions-gh-pages` GitHub Action.
+
+## Setup
+
+Run the following commands to install dependencies and Playwright's browser binaries:
+
+```bash
+npm install
+npx playwright install
+```
+
+## Running tests
+
+- **Unit tests**: `npm run check`
+- **BDD tests**: `npm test`
+
