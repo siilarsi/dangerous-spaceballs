@@ -1,0 +1,3 @@
+- Before making any code changes, run `npm test`.
+- After making code changes, run `npm test` again to ensure both the gherkin scenarios and the check_orb_radius test pass.
+- If tests fail, update the code or tests so that they pass before committing.
