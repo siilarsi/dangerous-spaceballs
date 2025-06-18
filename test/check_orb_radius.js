@@ -1,5 +1,6 @@
 const fs = require('fs');
-const content = fs.readFileSync('index.html', 'utf8');
+// The game logic moved to main.js after refactoring, so parse that file
+const content = fs.readFileSync('main.js', 'utf8');
 const lines = content.split(/\r?\n/);
 const forIdx = lines.findIndex(l => l.includes('for (let i = this.orbs.length - 1'));
 if (forIdx === -1) {
