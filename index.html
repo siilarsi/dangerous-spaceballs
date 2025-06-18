@@ -115,6 +115,12 @@
                 this.lastFired = 0;
                 this.bullets = [];
 
+                // Orb management
+                this.orbs = [];
+                this.nextOrbSpawn = 0;
+                this.orbSpawnRate = 3000; // milliseconds
+                this.orbGrowthDuration = 500;
+
                 // Flame effect for boosting
                 this.flame = this.add.triangle(0, 0, 0, 0, 5, 15, -5, 15, 0xffa500);
                 this.flame.setOrigin(0.5, 0.5);
@@ -207,6 +213,42 @@
                     if (b.sprite.x < 0 || b.sprite.x > this.scale.width || b.sprite.y < 0 || b.sprite.y > this.scale.height) {
                         b.sprite.destroy();
                         this.bullets.splice(i, 1);
+                    }
+                }
+
+                if (time > this.nextOrbSpawn) {
+                    const x = Phaser.Math.Between(0, this.scale.width);
+                    const y = Phaser.Math.Between(0, this.scale.height);
+                    const color = Math.random() < 0.5 ? 0xff0000 : 0x0000ff;
+                    const orb = this.add.circle(x, y, 10, color);
+                    orb.setScale(0);
+                    const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
+                    const speed = 50;
+                    this.orbs.push({
+                        sprite: orb,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        spawnTime: time,
+                        growing: true
+                    });
+                    this.nextOrbSpawn = time + this.orbSpawnRate;
+                }
+
+                for (let i = this.orbs.length - 1; i >= 0; i--) {
+                    const o = this.orbs[i];
+                    if (o.growing) {
+                        const progress = Math.min(1, (time - o.spawnTime) / this.orbGrowthDuration);
+                        o.sprite.setScale(progress);
+                        if (progress >= 1) {
+                            o.growing = false;
+                        }
+                    } else {
+                        o.sprite.x += o.vx * deltaSeconds;
+                        o.sprite.y += o.vy * deltaSeconds;
+                        if (o.sprite.x < -20 || o.sprite.x > this.scale.width + 20 || o.sprite.y < -20 || o.sprite.y > this.scale.height + 20) {
+                            o.sprite.destroy();
+                            this.orbs.splice(i, 1);
+                        }
                     }
                 }
 
