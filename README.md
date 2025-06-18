@@ -1,6 +1,9 @@
 # dangerous-spaceballs
 A simple js game to test out phaser.
 
+The Phaser runtime is bundled locally at `lib/phaser.min.js` and the HTML page
+loads this file rather than using a CDN.
+
 ## Features
 
 - Centered playfield framed by glowing edges.
