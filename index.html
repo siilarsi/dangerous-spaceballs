@@ -58,17 +58,51 @@
         function startGame() {
             const config = {
                 type: Phaser.AUTO,
+                parent: 'game',
                 width: 800,
                 height: 600,
+                backgroundColor: '#000000',
                 scene: {
-                    preload: function() {},
-                    create: function() {
-                        this.add.text(100, 100, 'Hello Phaser!', { font: '40px Arial', fill: '#ffffff' });
-                    },
-                    update: function() {}
+                    create: create,
+                    update: update
                 }
             };
-            new Phaser.Game(config);
+
+            const game = new Phaser.Game(config);
+
+            function create() {
+                // Create a simple triangular ship using a polygon
+                const shipPoints = [0, -20, 15, 20, -15, 20];
+                this.ship = this.add.polygon(400, 300, shipPoints, 0xffffff);
+                this.ship.setOrigin(0.5, 0.5);
+
+                // Reticle that follows the pointer
+                this.reticle = this.add.graphics({ x: 400, y: 300 });
+                this.reticle.lineStyle(1, 0xff0000);
+                this.reticle.strokeCircle(0, 0, 10);
+                this.reticle.lineBetween(-12, 0, 12, 0);
+                this.reticle.lineBetween(0, -12, 0, 12);
+
+                this.input.on('pointermove', pointer => {
+                    this.reticle.x = pointer.x;
+                    this.reticle.y = pointer.y;
+                });
+            }
+
+            function update() {
+                // Smoothly rotate the ship to face the pointer
+                const targetAngle = Phaser.Math.Angle.Between(
+                    this.ship.x,
+                    this.ship.y,
+                    this.reticle.x,
+                    this.reticle.y
+                );
+                this.ship.rotation = Phaser.Math.Angle.RotateTo(
+                    this.ship.rotation,
+                    targetAngle + Math.PI / 2,
+                    0.05
+                );
+            }
         }
 
         document.getElementById('start-button').addEventListener('click', function() {
