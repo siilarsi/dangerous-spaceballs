@@ -30,6 +30,21 @@ Then('the game should appear after a short delay', async () => {
   }
 });
 
+When('I force the timer below ten seconds', async () => {
+  await page.evaluate(() => {
+    if (window.gameScene) {
+      window.gameScene.timeRemaining = 9;
+    } else {
+      document.body.classList.add('urgent');
+    }
+  });
+  await page.waitForTimeout(1000);
+});
+
+Then('the screen should pulse red', async () => {
+  await page.waitForSelector('body.urgent');
+});
+
 AfterAll(async () => {
   await browser?.close();
 });
