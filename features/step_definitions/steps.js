@@ -104,3 +104,32 @@ Then('the ammo should decrease', async () => {
 AfterAll(async () => {
   await browser?.close();
 });
+
+When('I simulate hitting {int} red orbs', async count => {
+  await page.waitForFunction(() => window.gameScene && window.gameScene.handleOrbHit);
+  await page.evaluate(c => {
+    for (let i = 0; i < c; i++) {
+      window.gameScene.handleOrbHit(0xff0000, 400, 300, window.gameScene.time.now);
+    }
+  }, count);
+});
+
+Then('the streak should be {int}', async expected => {
+  const val = await page.evaluate(() => window.gameScene.streak);
+  if (val !== expected) {
+    throw new Error(`Expected streak ${expected} but got ${val}`);
+  }
+});
+
+Then('the score should be {int}', async expected => {
+  const val = await page.evaluate(() => window.gameScene.score);
+  if (val !== expected) {
+    throw new Error(`Expected score ${expected} but got ${val}`);
+  }
+});
+
+Then('the streak text {string} should appear', async text => {
+  await page.waitForFunction(t => {
+    return window.gameScene.floatingTexts.some(ft => ft.sprite.text === t);
+  }, text);
+});
