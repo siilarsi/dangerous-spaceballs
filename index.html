@@ -65,6 +65,15 @@
             font-family: Arial, sans-serif;
             display: none;
         }
+        #score-container {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -77,6 +86,7 @@
     <div id="game"></div>
     <div id="fuel-container"><div id="fuel-bar"></div></div>
     <div id="ammo-container">Ammo: <span id="ammo-count">0</span></div>
+    <div id="score-container">Score: <span id="score">0</span> | Streak: <span id="streak">0</span></div>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
     <script>
         function startGame() {
@@ -95,6 +105,7 @@
             const game = new Phaser.Game(config);
             document.getElementById('fuel-container').style.display = 'block';
             document.getElementById('ammo-container').style.display = 'block';
+            document.getElementById('score-container').style.display = 'block';
 
             window.addEventListener('resize', function () {
                 game.scale.resize(window.innerWidth, window.innerHeight);
@@ -127,6 +138,10 @@
                 this.flame.visible = false;
 
                 document.getElementById('ammo-count').textContent = this.ammo;
+                this.score = 0;
+                this.streak = 0;
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('streak').textContent = this.streak;
 
                 this.input.mouse.disableContextMenu();
 
@@ -210,6 +225,29 @@
                     const b = this.bullets[i];
                     b.sprite.x += b.vx * deltaSeconds;
                     b.sprite.y += b.vy * deltaSeconds;
+                    // Check collision with orbs
+                    for (let j = this.orbs.length - 1; j >= 0; j--) {
+                        const o = this.orbs[j];
+                        const r = o.radius * o.sprite.scaleX;
+                        const dx = b.sprite.x - o.sprite.x;
+                        const dy = b.sprite.y - o.sprite.y;
+                        if (dx * dx + dy * dy <= r * r) {
+                            if (o.sprite.fillColor === 0xff0000) {
+                                this.score += 10;
+                                this.streak += 1;
+                            } else {
+                                this.score -= 5;
+                                this.streak = 0;
+                            }
+                            document.getElementById('score').textContent = this.score;
+                            document.getElementById('streak').textContent = this.streak;
+                            o.sprite.destroy();
+                            this.orbs.splice(j, 1);
+                            b.sprite.destroy();
+                            this.bullets.splice(i, 1);
+                            break;
+                        }
+                    }
                     if (b.sprite.x < 0 || b.sprite.x > this.scale.width || b.sprite.y < 0 || b.sprite.y > this.scale.height) {
                         b.sprite.destroy();
                         this.bullets.splice(i, 1);
@@ -264,6 +302,15 @@
                             o.sprite.y = this.scale.height - radius;
                         }
                     }
+                    // Check ship collision
+                    const shipR = 20;
+                    const dx = this.ship.x - o.sprite.x;
+                    const dy = this.ship.y - o.sprite.y;
+                    if (dx * dx + dy * dy <= (shipR + radius * o.sprite.scaleX) * (shipR + radius * o.sprite.scaleX)) {
+                        alert('Game Over');
+                        window.location.reload();
+                        return;
+                    }
                 }
 
                 this.ship.x += this.velocity.x * deltaSeconds;
@@ -279,6 +326,8 @@
 
                 document.getElementById('fuel-bar').style.width = this.fuel + '%';
                 document.getElementById('ammo-count').textContent = this.ammo;
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('streak').textContent = this.streak;
             }
         }
 
