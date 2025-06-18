@@ -1,0 +1,21 @@
+{
+  "name": "dangerous-spaceballs",
+  "version": "1.0.0",
+  "description": "A simple js game to test out phaser.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npm run check && cucumber-js",
+    "check": "node test/check_orb_radius.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.3.0",
+    "playwright": "^1.53.1"
+  }
+}

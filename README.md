@@ -3,7 +3,6 @@ A simple js game to test out phaser.
 
 ## Features
 
-- Intro sequence with an animated promo that transitions directly into the game.
 - Centered playfield framed by glowing edges.
 - Ship & reticle interaction: the triangular ship rotates toward the mouse and a reticle follows your pointer.
 - Thruster boost triggered by right-click, complete with flame effect and fuel meter.
