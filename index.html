@@ -86,7 +86,7 @@
     <div id="game"></div>
     <div id="fuel-container"><div id="fuel-bar"></div></div>
     <div id="ammo-container">Ammo: <span id="ammo-count">0</span></div>
-    <div id="score-container">Score: <span id="score">0</span> | Streak: <span id="streak">0</span></div>
+    <div id="score-container">Score: <span id="score">0</span> | Streak: <span id="streak">0</span> | Time: <span id="time-remaining">60</span></div>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
     <script>
         function startGame() {
@@ -126,6 +126,14 @@
                 this.lastFired = 0;
                 this.bullets = [];
 
+                // Timer and power-ups
+                this.timeRemaining = 60;
+                this.powerUps = [];
+                this.floatingTexts = [];
+                this.nextPowerUpSpawn = 5000;
+                this.powerUpSpawnRate = 8000; // milliseconds
+                this.powerUpFadeDuration = 6000;
+
                 // Orb management
                 this.orbs = [];
                 this.nextOrbSpawn = 0;
@@ -142,6 +150,7 @@
                 this.streak = 0;
                 document.getElementById('score').textContent = this.score;
                 document.getElementById('streak').textContent = this.streak;
+                document.getElementById('time-remaining').textContent = Math.ceil(this.timeRemaining);
 
                 this.input.mouse.disableContextMenu();
 
@@ -193,6 +202,14 @@
 
                 const deltaSeconds = delta / 1000;
                 const noseAngle = this.ship.rotation - Math.PI / 2;
+
+                // Countdown timer
+                this.timeRemaining -= deltaSeconds;
+                if (this.timeRemaining <= 0) {
+                    alert('Time Up!');
+                    window.location.reload();
+                    return;
+                }
 
                 if (this.isFiring && this.ammo > 0 && time > this.lastFired + this.fireRate) {
                     const angle = Phaser.Math.Angle.Between(this.ship.x, this.ship.y, this.reticle.x, this.reticle.y);
@@ -254,6 +271,19 @@
                     }
                 }
 
+                if (time > this.nextPowerUpSpawn) {
+                    const x = Phaser.Math.Between(20, this.scale.width - 20);
+                    const y = Phaser.Math.Between(20, this.scale.height - 20);
+                    const type = Phaser.Math.RND.pick(['ammo', 'fuel', 'time']);
+                    let color = 0xffff00;
+                    if (type === 'fuel') color = 0xffa500;
+                    if (type === 'time') color = 0x00ff00;
+                    const pu = this.add.circle(x, y, 8, color);
+                    pu.setAlpha(1);
+                    this.powerUps.push({ sprite: pu, type: type, spawnTime: time });
+                    this.nextPowerUpSpawn = time + this.powerUpSpawnRate;
+                }
+
                 if (time > this.nextOrbSpawn) {
                     const x = Phaser.Math.Between(0, this.scale.width);
                     const y = Phaser.Math.Between(0, this.scale.height);
@@ -313,6 +343,40 @@
                     }
                 }
 
+                for (let i = this.powerUps.length - 1; i >= 0; i--) {
+                    const p = this.powerUps[i];
+                    const progress = (time - p.spawnTime) / this.powerUpFadeDuration;
+                    p.sprite.setAlpha(1 - progress);
+                    if (progress >= 1) {
+                        p.sprite.destroy();
+                        this.powerUps.splice(i, 1);
+                        continue;
+                    }
+                    const dxP = this.ship.x - p.sprite.x;
+                    const dyP = this.ship.y - p.sprite.y;
+                    if (dxP * dxP + dyP * dyP <= 28 * 28) {
+                        if (p.type === 'ammo') this.ammo += 15;
+                        if (p.type === 'fuel') this.fuel = Math.min(100, this.fuel + 15);
+                        if (p.type === 'time') this.timeRemaining += 15;
+                        const txt = this.add.text(p.sprite.x, p.sprite.y, '+15', { font: '16px Arial', color: '#ffffff' });
+                        txt.setOrigin(0.5);
+                        this.floatingTexts.push({ sprite: txt, spawnTime: time });
+                        p.sprite.destroy();
+                        this.powerUps.splice(i, 1);
+                    }
+                }
+
+                for (let i = this.floatingTexts.length - 1; i >= 0; i--) {
+                    const ft = this.floatingTexts[i];
+                    const prog = (time - ft.spawnTime) / 1000;
+                    ft.sprite.y -= deltaSeconds * 20;
+                    ft.sprite.setAlpha(1 - prog);
+                    if (prog >= 1) {
+                        ft.sprite.destroy();
+                        this.floatingTexts.splice(i, 1);
+                    }
+                }
+
                 this.ship.x += this.velocity.x * deltaSeconds;
                 this.ship.y += this.velocity.y * deltaSeconds;
                 this.velocity.scale(0.99);
@@ -328,6 +392,7 @@
                 document.getElementById('ammo-count').textContent = this.ammo;
                 document.getElementById('score').textContent = this.score;
                 document.getElementById('streak').textContent = this.streak;
+                document.getElementById('time-remaining').textContent = Math.ceil(this.timeRemaining);
             }
         }
 
