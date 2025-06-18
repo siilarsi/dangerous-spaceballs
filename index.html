@@ -59,8 +59,8 @@
             const config = {
                 type: Phaser.AUTO,
                 parent: 'game',
-                width: 800,
-                height: 600,
+                width: window.innerWidth,
+                height: window.innerHeight,
                 backgroundColor: '#000000',
                 scene: {
                     create: create,
@@ -69,6 +69,10 @@
             };
 
             const game = new Phaser.Game(config);
+
+            window.addEventListener('resize', function () {
+                game.scale.resize(window.innerWidth, window.innerHeight);
+            });
 
             function create() {
                 // Create a simple triangular ship using a polygon
