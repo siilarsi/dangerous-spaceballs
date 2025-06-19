@@ -1,13 +1,33 @@
+        const menuMusic = new Audio('sounds/music_menu.ogg');
+        menuMusic.loop = true;
+        menuMusic.volume = 0.6;
+        const playTracks = [
+            new Audio('sounds/music_play1.ogg'),
+            new Audio('sounds/music_play2.ogg'),
+            new Audio('sounds/music_play3.ogg')
+        ];
+        playTracks.forEach(t => { t.loop = true; t.volume = 0.6; });
+        const sfx = {
+            laser: new Audio('sounds/laser_shoot.ogg'),
+            boost: new Audio('sounds/boost_loop.ogg'),
+            good: new Audio('sounds/hit_good.ogg'),
+            bad: new Audio('sounds/hit_bad.ogg'),
+            pickup: new Audio('sounds/pickup.ogg'),
+            tick: new Audio('sounds/tick.ogg'),
+            timeout: new Audio('sounds/timeout.ogg'),
+            crash: new Audio('sounds/crash.ogg'),
+            explosion: new Audio('sounds/explosion.ogg'),
+            destroyPickup: new Audio('sounds/destroy_pickup.ogg')
+        };
+        Object.values(sfx).forEach(a => { a.volume = 0.8; });
+        sfx.boost.loop = true;
+
+        window.audioElements = { menuMusic, playTracks, sfx };
+        menuMusic.play().catch(() => {});
+
         function playTick() {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(150, ctx.currentTime);
-            gain.gain.setValueAtTime(0.2, ctx.currentTime);
-            osc.connect(gain).connect(ctx.destination);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.1);
+            sfx.tick.currentTime = 0;
+            sfx.tick.play().catch(() => {});
         }
 
         function startGame() {
@@ -110,10 +130,16 @@
                             txt.setOrigin(0.5);
                             this.floatingTexts.push({ sprite: txt, spawnTime: time });
                         }
+                        sfx.good.currentTime = 0;
+                        sfx.good.play().catch(() => {});
                     } else {
                         this.score -= 5;
                         this.streak = 0;
+                        sfx.bad.currentTime = 0;
+                        sfx.bad.play().catch(() => {});
                     }
+                    sfx.explosion.currentTime = 0;
+                    sfx.explosion.play().catch(() => {});
                     document.getElementById('score').textContent = this.score;
                     document.getElementById('streak').textContent = this.streak;
                 };
@@ -130,9 +156,13 @@
                 this.input.on('pointerdown', pointer => {
                     if (pointer.button === 0 && this.ammo > 0) {
                         this.isFiring = true;
+                        sfx.laser.currentTime = 0;
+                        sfx.laser.play().catch(() => {});
                     }
                     if (pointer.button === 2 && this.fuel > 0) {
                         this.isBoosting = true;
+                        sfx.boost.currentTime = 0;
+                        sfx.boost.play().catch(() => {});
                     }
                 });
 
@@ -142,6 +172,8 @@
                     }
                     if (pointer.button === 2) {
                         this.isBoosting = false;
+                        sfx.boost.pause();
+                        sfx.boost.currentTime = 0;
                     }
                 });
 
@@ -181,6 +213,11 @@
                 if (this.timeRemaining <= 0) {
                     clearInterval(this.urgentInterval);
                     document.body.classList.remove('urgent');
+                    sfx.timeout.currentTime = 0;
+                    sfx.timeout.play().catch(() => {});
+                    window.currentGameplayMusic?.pause();
+                    sfx.boost.pause();
+                    sfx.boost.currentTime = 0;
                     alert('Time Up!');
                     window.location.reload();
                     return;
@@ -198,6 +235,8 @@
                     this.bullets.push({ sprite: bullet, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed });
                     this.lastFired = time;
                     this.ammo -= 1;
+                    sfx.laser.currentTime = 0;
+                    sfx.laser.play().catch(() => {});
                 }
 
                 if (this.isBoosting && this.fuel > 0) {
@@ -209,6 +248,10 @@
                         this.fuel = 0;
                         this.isBoosting = false;
                     }
+                }
+                if (!this.isBoosting || this.fuel <= 0) {
+                    sfx.boost.pause();
+                    sfx.boost.currentTime = 0;
                 }
 
                 this.flame.visible = this.isBoosting && this.fuel > 0;
@@ -309,6 +352,13 @@
                     if (dx * dx + dy * dy <= (shipR + radius * o.sprite.scaleX) * (shipR + radius * o.sprite.scaleX)) {
                         clearInterval(this.urgentInterval);
                         document.body.classList.remove('urgent');
+                        sfx.crash.currentTime = 0;
+                        sfx.crash.play().catch(() => {});
+                        sfx.explosion.currentTime = 0;
+                        sfx.explosion.play().catch(() => {});
+                        window.currentGameplayMusic?.pause();
+                        sfx.boost.pause();
+                        sfx.boost.currentTime = 0;
                         alert('Game Over');
                         window.location.reload();
                         return;
@@ -333,6 +383,8 @@
                         const txt = this.add.text(p.sprite.x, p.sprite.y, '+15', { font: '16px Arial', color: '#ffffff' });
                         txt.setOrigin(0.5);
                         this.floatingTexts.push({ sprite: txt, spawnTime: time });
+                        sfx.pickup.currentTime = 0;
+                        sfx.pickup.play().catch(() => {});
                         p.sprite.destroy();
                         this.powerUps.splice(i, 1);
                     }
@@ -372,9 +424,14 @@
             document.getElementById('start-screen').style.display = 'none';
             const promo = document.getElementById('promo-animation');
             promo.style.display = 'flex';
+            menuMusic.pause();
+            menuMusic.currentTime = 0;
             setTimeout(function() {
                 promo.style.display = 'none';
                 document.getElementById('game').style.display = 'block';
+                window.currentGameplayMusic = playTracks[Math.floor(Math.random() * playTracks.length)];
+                window.currentGameplayMusic.currentTime = 0;
+                window.currentGameplayMusic.play().catch(() => {});
                 startGame();
             }, 3000);
         });

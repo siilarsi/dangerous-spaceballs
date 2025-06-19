@@ -153,3 +153,19 @@ Then('the level should be {int}', async expected => {
     throw new Error(`Expected level ${expected} but got ${val}`);
   }
 });
+
+Then('menu music should be playing', async () => {
+  await page.waitForFunction(() => window.audioElements?.menuMusic);
+  const exists = await page.evaluate(() => !!window.audioElements.menuMusic);
+  if (!exists) {
+    throw new Error('Menu music not initialized');
+  }
+});
+
+Then('gameplay music should be playing', async () => {
+  await page.waitForFunction(() => window.currentGameplayMusic);
+  const exists = await page.evaluate(() => !!window.currentGameplayMusic);
+  if (!exists) {
+    throw new Error('Gameplay music not initialized');
+  }
+});
