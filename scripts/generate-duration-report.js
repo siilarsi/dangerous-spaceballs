@@ -32,12 +32,7 @@ async function fetchRuns() {
   return result.workflow_runs || [];
 }
 
-async function fetchRunDuration(id) {
-  const result = await request(`/repos/${repo}/actions/runs/${id}`);
-  return result.run_duration_ms ? result.run_duration_ms / 1000 : null;
-}
-
-async function fetchDurationFromArtifact(id) {
+async function downloadArtifactFile(id, filename) {
   const artifacts = await request(`/repos/${repo}/actions/runs/${id}/artifacts`);
   if (!artifacts.artifacts) return null;
   const artifact = artifacts.artifacts.find(a => a.name === 'bdd-duration');
@@ -45,26 +40,34 @@ async function fetchDurationFromArtifact(id) {
   const zip = `artifact-${id}.zip`;
   try {
     execSync(`curl -L -H "Authorization: Bearer ${token}" -o ${zip} ${artifact.archive_download_url}`);
-    const output = execSync(`unzip -p ${zip} duration.txt`).toString().trim();
+    const output = execSync(`unzip -p ${zip} ${filename}`).toString();
     fs.unlinkSync(zip);
-    const val = parseFloat(output);
-    return isNaN(val) ? null : val;
+    return output;
   } catch (e) {
     return null;
   }
 }
 
-async function main() {
-  const runs = await fetchRuns();
-  const durations = [];
+async function fetchPreviousDurations(runs) {
   for (const run of runs) {
     if (String(run.id) === runId) continue; // skip current run
-    let duration = await fetchRunDuration(run.id);
-    if (duration === null) {
-      duration = await fetchDurationFromArtifact(run.id);
+    const json = await downloadArtifactFile(run.id, 'duration.json');
+    if (json) {
+      try {
+        return JSON.parse(json);
+      } catch (e) {
+        return [];
+      }
     }
-    if (duration === null) continue;
-    durations.push({ run_number: run.run_number, duration });
+  }
+  return [];
+}
+
+async function main() {
+  const runs = await fetchRuns();
+  let durations = await fetchPreviousDurations(runs);
+  if (!Array.isArray(durations)) {
+    durations = [];
   }
   // include current run from file if available
   try {
