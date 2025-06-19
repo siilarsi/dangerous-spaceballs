@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npm run check && cucumber-js --parallel ${CUCUMBER_PARALLEL:-2}",
+    "test": "npm run check && cucumber-js --parallel ${CUCUMBER_PARALLEL:-1}",
     "check": "node test/check_orb_radius.js"
   },
   "keywords": [],
