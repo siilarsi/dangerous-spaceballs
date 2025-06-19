@@ -19,6 +19,13 @@
     <div id="score-container">Score: <span id="score">0</span> | Streak: <span id="streak">0</span> | Time: <span id="time-remaining">60</span></div>
     <div id="level-banner"></div>
     <script src="lib/phaser.min.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const ld = parseInt(params.get('levelDuration'));
+        if (!isNaN(ld)) {
+            window.levelDuration = ld;
+        }
+    </script>
     <script src="main.js"></script>
 </body>
 </html>
