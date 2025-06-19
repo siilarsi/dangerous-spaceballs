@@ -10,7 +10,7 @@
             osc.stop(ctx.currentTime + 0.1);
         }
 
-        function startGame() {
+        function startGame(levelDurationMs = 15000) {
             const config = {
                 type: Phaser.AUTO,
                 parent: 'game',
@@ -66,7 +66,8 @@
                 this.orbSpeedMultiplier = 1;
 
                 this.level = 1;
-                this.nextLevelTime = this.time.now + 15000;
+                this.levelDuration = levelDurationMs;
+                this.nextLevelTime = this.time.now + this.levelDuration;
                 this.levelBanner = document.getElementById('level-banner');
                 this.showLevelBanner = level => {
                     this.levelBanner.textContent = `Level ${level}`;
@@ -258,7 +259,7 @@
 
                 if (time > this.nextLevelTime) {
                     this.level += 1;
-                    this.nextLevelTime += 15000;
+                    this.nextLevelTime += this.levelDuration;
                     this.orbSpeedMultiplier *= 1.2;
                     for (const o of this.orbs) {
                         o.vx *= 1.2;
@@ -375,6 +376,6 @@
             setTimeout(function() {
                 promo.style.display = 'none';
                 document.getElementById('game').style.display = 'block';
-                startGame();
+                startGame(window.levelDuration);
             }, 3000);
         });
