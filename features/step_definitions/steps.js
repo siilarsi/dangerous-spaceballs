@@ -343,3 +343,51 @@ Then('menu music should be playing', async () => {
       throw new Error(`Expected high score ${expected} but got ${val}`);
     }
   });
+
+let lastOrbPos;
+
+When('I clear existing orbs', async () => {
+  await page.waitForFunction(() => window.gameScene && window.gameScene.orbs);
+  await page.evaluate(() => {
+    const gs = window.gameScene;
+    gs.orbs.forEach(o => o.sprite.destroy());
+    gs.orbs = [];
+  });
+});
+
+When('I spawn a stationary red orb offset by {int} {int} from the ship', async (dx, dy) => {
+  await page.waitForFunction(() => window.gameScene && window.gameScene.orbs);
+  await page.evaluate(({ dx, dy }) => {
+    const gs = window.gameScene;
+    const orb = gs.add.circle(gs.ship.x + dx, gs.ship.y + dy, 25, 0xff0000);
+    orb.setScale(1);
+    gs.orbs.push({ sprite: orb, radius: 25, vx: 0, vy: 0, spawnTime: gs.time.now, growing: false });
+  }, { dx, dy });
+  await new Promise(r => setTimeout(r, 100));
+});
+
+When('I record the orb position', async () => {
+  lastOrbPos = await page.evaluate(() => {
+    const o = window.gameScene?.orbs?.[0];
+    if (!o) return null;
+    return { x: o.sprite.x, y: o.sprite.y };
+  });
+  if (!lastOrbPos) {
+    throw new Error('No orb found');
+  }
+});
+
+Then('the orb should have moved', async () => {
+  const pos = await page.evaluate(() => {
+    const o = window.gameScene?.orbs?.[0];
+    if (!o) return null;
+    return { x: o.sprite.x, y: o.sprite.y };
+  });
+  if (!pos) {
+    throw new Error('No orb found');
+  }
+  const dist = Math.hypot(pos.x - lastOrbPos.x, pos.y - lastOrbPos.y);
+  if (dist < 2) {
+    throw new Error('Orb did not move');
+  }
+});
