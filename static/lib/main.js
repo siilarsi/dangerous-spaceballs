@@ -26,6 +26,7 @@
             document.getElementById('fuel-container').style.display = 'block';
             document.getElementById('ammo-container').style.display = 'block';
             document.getElementById('score-container').style.display = 'block';
+            document.getElementById('legend').style.display = 'block';
 
             window.addEventListener('resize', function () {
                 game.scale.resize(window.innerWidth, window.innerHeight);
