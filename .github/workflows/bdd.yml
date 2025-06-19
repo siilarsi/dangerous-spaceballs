@@ -32,7 +32,7 @@ jobs:
           node scripts/generate-duration-report.js
       - name: Upload report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bdd-duration-report
           path: bdd-duration-report.html
