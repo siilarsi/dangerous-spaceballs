@@ -154,6 +154,13 @@ Then('the score should be {int}', async expected => {
   }
 });
 
+Then('the credits should be {int}', async expected => {
+  const val = await page.evaluate(() => window.gameScene.credits);
+  if (val !== expected) {
+    throw new Error(`Expected credits ${expected} but got ${val}`);
+  }
+});
+
 Then('the streak text {string} should appear', async text => {
   await page.waitForFunction(t => {
     return window.gameScene.floatingTexts.some(ft => ft.sprite.text === t);
