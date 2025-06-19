@@ -29,3 +29,7 @@ npx playwright install
 - **Unit tests**: `npm run check`
 - **BDD tests**: `npm test`
 
+
+## BDD duration report
+
+When the `BDD Tests` workflow runs on pushes to `main`, it uploads an artifact named `bdd-duration-report`. Download the artifact from the workflow run summary and open the included `bdd-duration-report.html` file in a browser to view a chart of recent BDD test durations.
