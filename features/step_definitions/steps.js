@@ -568,3 +568,21 @@ Then('the game should not be over', async () => {
     throw new Error('Game should not be over');
   }
 });
+
+Then('the inventory panel should be visible', async () => {
+  const display = await page.$eval('#inventory-panel', el => getComputedStyle(el).display);
+  if (display === 'none') {
+    throw new Error('Inventory panel not visible');
+  }
+});
+
+Then('the inventory stat {string} should be {string}', async (label, expected) => {
+  const actual = await page.evaluate(lbl => {
+    const items = Array.from(document.querySelectorAll('#inventory-panel li'));
+    const el = items.find(i => i.textContent.trim().toLowerCase().startsWith(lbl.toLowerCase()));
+    return el ? el.querySelector('span').textContent.trim() : null;
+  }, label);
+  if (actual !== expected) {
+    throw new Error(`Expected ${label} ${expected} but got ${actual}`);
+  }
+});
