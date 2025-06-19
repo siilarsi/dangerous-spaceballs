@@ -14,6 +14,8 @@ const path = require('path');
 setDefaultTimeout(60 * 1000);
 
 let browser, context, page;
+let lastPointer = { x: 0, y: 0 };
+let initialAmmo = 0;
 
 BeforeAll(async () => {
   browser = await chromium.launch({
@@ -222,5 +224,52 @@ Then('menu music should be playing', async () => {
     const bg = await page.$eval('#game', el => getComputedStyle(el).backgroundImage);
     if (!bg.includes('stars.webp')) {
       throw new Error('Star background not visible');
+    }
+  });
+
+  When('I move the pointer to offset {int} {int}', async (dx, dy) => {
+    await page.waitForFunction(() => window.gameScene);
+    const canvas = await page.waitForSelector('#game canvas', { state: 'attached' });
+    const box = await canvas.boundingBox();
+    const targetX = box.width / 2 + dx;
+    const targetY = box.height / 2 + dy;
+    await page.mouse.move(box.x + targetX, box.y + targetY);
+    lastPointer = { x: targetX, y: targetY };
+    await page.waitForTimeout(200);
+  });
+
+  Then('the reticle should follow the pointer', async () => {
+    const pos = await page.evaluate(() => ({ x: window.gameScene.reticle.x, y: window.gameScene.reticle.y }));
+    if (Math.abs(pos.x - lastPointer.x) > 1 || Math.abs(pos.y - lastPointer.y) > 1) {
+      throw new Error('Reticle did not follow pointer');
+    }
+  });
+
+  Then('the ship should face the reticle', async () => {
+    await page.waitForFunction(({ x, y }) => {
+      const gs = window.gameScene;
+      if (!gs) return false;
+      const target = Math.atan2(y - gs.ship.y, x - gs.ship.x) + Math.PI / 2;
+      const diff = Math.abs(((gs.ship.rotation - target + Math.PI) % (Math.PI * 2)) - Math.PI);
+      return diff < 0.2;
+    }, lastPointer);
+  });
+
+  When('I spawn an ammo power-up on the ship', async () => {
+    await page.waitForFunction(() => window.gameScene && window.gameScene.powerUps);
+    initialAmmo = await page.evaluate(() => window.gameScene.ammo);
+    await page.evaluate(() => {
+      const gs = window.gameScene;
+      const time = gs.time.now;
+      const pu = gs.add.circle(gs.ship.x, gs.ship.y, 8, 0xffff00);
+      gs.powerUps.push({ sprite: pu, type: 'ammo', spawnTime: time });
+    });
+    await page.waitForTimeout(200);
+  });
+
+  Then('the ammo should increase by 15', async () => {
+    const ammo = await page.evaluate(() => window.gameScene.ammo);
+    if (ammo !== initialAmmo + 15) {
+      throw new Error('Ammo did not increase by 15');
     }
   });
