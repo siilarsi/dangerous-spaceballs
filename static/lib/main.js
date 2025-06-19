@@ -14,7 +14,7 @@
                 parent: 'game',
                 width: window.innerWidth,
                 height: window.innerHeight,
-                backgroundColor: '#000000',
+                backgroundColor: 'transparent',
                 scene: {
                     create: create,
                     update: update

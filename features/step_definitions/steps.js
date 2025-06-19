@@ -217,3 +217,10 @@ Then('menu music should be playing', async () => {
       throw new Error(`Expected time remaining ${expected} but got ${val}`);
     }
   });
+
+  Then('the star background should cover the game area', async () => {
+    const bg = await page.$eval('#game', el => getComputedStyle(el).backgroundImage);
+    if (!bg.includes('stars.webp')) {
+      throw new Error('Star background not visible');
+    }
+  });
