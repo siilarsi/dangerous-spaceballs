@@ -508,6 +508,21 @@ Then('the shop should list upgrades', async () => {
   await page.waitForSelector('#shop-panel .shop-item');
 });
 
+Then('each upgrade should appear as a card', async () => {
+  await page.waitForSelector('#shop-panel .shop-item');
+  const ok = await page.$$eval('#shop-panel .shop-item', items =>
+    items.every(i =>
+      i.querySelector('.icon') &&
+      i.querySelector('.desc') &&
+      i.querySelector('.price-badge') &&
+      i.querySelector('.buy-btn')
+    )
+  );
+  if (!ok) {
+    throw new Error('Upgrade cards not rendered correctly');
+  }
+});
+
 Given('I have {int} credits', async count => {
   await page.evaluate(c => {
     localStorage.setItem('credits', c);
