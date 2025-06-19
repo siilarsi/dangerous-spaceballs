@@ -29,3 +29,9 @@ Feature: Start the game
     When I click the start screen
     Then the game should appear after a short delay
     And the legend should be visible
+
+  Scenario: Legend icons match power-up graphics
+    Given I open the game page
+    When I click the start screen
+    Then the game should appear after a short delay
+    And the legend icons should match power-up graphics

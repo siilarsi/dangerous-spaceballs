@@ -179,7 +179,7 @@
                 this.floatingTexts = [];
                 this.nextPowerUpSpawn = 5000;
                 this.powerUpSpawnRate = 8000; // milliseconds
-                this.powerUpFadeDuration = 9000;
+                this.powerUpFadeDuration = 12000;
                 this.urgentStarted = false;
                 this.urgentInterval = null;
 
@@ -481,8 +481,8 @@
                     if (type === 'fuel') color = 0xffa500;
                     if (type === 'time') color = 0x00ff00;
                     const chest = this.add.container(x, y);
-                    const base = this.add.rectangle(0, 3, 20, 11, 0x8b4513);
-                    const lid = this.add.rectangle(0, -4, 20, 6, color);
+                    const base = this.add.rectangle(0, 4, 24, 13, 0x8b4513);
+                    const lid = this.add.rectangle(0, -5, 24, 7, color);
                     chest.add([base, lid]);
                     chest.setAlpha(1);
                     this.powerUps.push({ sprite: chest, type: type, spawnTime: time });

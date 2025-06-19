@@ -264,6 +264,27 @@ Then('menu music should be playing', async () => {
     }
   });
 
+  Then('the legend icons should match power-up graphics', async () => {
+    const icons = await page.$$eval('#legend .legend-dot', els =>
+      els.map(el => ({
+        base: getComputedStyle(el).backgroundColor,
+        lid: getComputedStyle(el, '::after').backgroundColor
+      }))
+    );
+    const expected = [
+      'rgb(255, 255, 0)',
+      'rgb(255, 165, 0)',
+      'rgb(0, 255, 0)'
+    ];
+    const baseColor = 'rgb(139, 69, 19)';
+    if (
+      icons.length !== 3 ||
+      icons.some((ic, i) => ic.base !== baseColor || ic.lid !== expected[i])
+    ) {
+      throw new Error('Legend icons do not match power-up graphics');
+    }
+  });
+
   Then('the legend should not be visible', async () => {
     const display = await page.$eval('#legend', el => getComputedStyle(el).display);
     if (display !== 'none') {
@@ -306,8 +327,8 @@ Then('menu music should be playing', async () => {
       const gs = window.gameScene;
       const time = gs.time.now;
       const chest = gs.add.container(gs.ship.x, gs.ship.y);
-      const base = gs.add.rectangle(0, 3, 20, 11, 0x8b4513);
-      const lid = gs.add.rectangle(0, -4, 20, 6, 0xffff00);
+      const base = gs.add.rectangle(0, 4, 24, 13, 0x8b4513);
+      const lid = gs.add.rectangle(0, -5, 24, 7, 0xffff00);
       chest.add([base, lid]);
       gs.powerUps.push({ sprite: chest, type: 'ammo', spawnTime: time });
       gs.nextPowerUpSpawn = Infinity;
@@ -321,8 +342,8 @@ Then('menu music should be playing', async () => {
       const gs = window.gameScene;
       const time = gs.time.now;
       const chest = gs.add.container(gs.ship.x + dx, gs.ship.y + dy);
-      const base = gs.add.rectangle(0, 3, 20, 11, 0x8b4513);
-      const lid = gs.add.rectangle(0, -4, 20, 6, 0xffff00);
+      const base = gs.add.rectangle(0, 4, 24, 13, 0x8b4513);
+      const lid = gs.add.rectangle(0, -5, 24, 7, 0xffff00);
       chest.add([base, lid]);
       gs.powerUps.push({ sprite: chest, type: 'ammo', spawnTime: time });
       gs.nextPowerUpSpawn = Infinity;
