@@ -359,9 +359,9 @@ When('I spawn a stationary red orb offset by {int} {int} from the ship', async (
   await page.waitForFunction(() => window.gameScene && window.gameScene.orbs);
   await page.evaluate(({ dx, dy }) => {
     const gs = window.gameScene;
-    const orb = gs.add.circle(gs.ship.x + dx, gs.ship.y + dy, 25, 0xff0000);
+    const orb = gs.add.circle(gs.ship.x + dx, gs.ship.y + dy, 20, 0xff0000);
     orb.setScale(1);
-    gs.orbs.push({ sprite: orb, radius: 25, vx: 0, vy: 0, spawnTime: gs.time.now, growing: false });
+    gs.orbs.push({ sprite: orb, radius: 20, vx: 0, vy: 0, spawnTime: gs.time.now, growing: false });
   }, { dx, dy });
   await new Promise(r => setTimeout(r, 100));
 });
