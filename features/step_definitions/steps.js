@@ -214,6 +214,28 @@ Then('menu music should be playing', async () => {
     }
   });
 
+  When('I hide the page', async () => {
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+      Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+  });
+
+  Then('gameplay music should be paused', async () => {
+    const paused = await page.evaluate(() => window.currentGameplayMusic?.paused);
+    if (!paused) {
+      throw new Error('Music was not paused');
+    }
+  });
+
+  Then('the game should be paused', async () => {
+    const paused = await page.evaluate(() => window.gamePaused);
+    if (!paused) {
+      throw new Error('Game not paused');
+    }
+  });
+
   Then('the time remaining should be {int}', async expected => {
     const val = await page.evaluate(() => Math.ceil(window.gameScene.timeRemaining));
     if (val !== expected) {

@@ -1,4 +1,5 @@
         const { menuMusic, playTracks, sfx } = window.audioElements;
+        window.gamePaused = false;
 
         const gameOverBox = document.getElementById('game-over');
         function showGameOver(msg) {
@@ -423,3 +424,28 @@
                 startGame(window.levelDuration);
             }, 3000);
         });
+
+        function handleVisibility() {
+            if (document.hidden) {
+                menuMusic.pause();
+                window.currentGameplayMusic?.pause();
+                sfx.boost.pause();
+                sfx.boost.currentTime = 0;
+                if (window.gameScene) {
+                    window.gameScene.scene.pause();
+                    window.gamePaused = true;
+                }
+            } else {
+                if (window.gameScene) {
+                    window.gameScene.scene.resume();
+                    window.gamePaused = false;
+                }
+                if (document.getElementById('start-screen').style.display !== 'none') {
+                    menuMusic.play().catch(() => {});
+                } else if (window.currentGameplayMusic) {
+                    window.currentGameplayMusic.play().catch(() => {});
+                }
+            }
+        }
+
+        document.addEventListener('visibilitychange', handleVisibility);
