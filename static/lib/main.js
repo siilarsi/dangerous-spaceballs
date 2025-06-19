@@ -255,7 +255,7 @@
                 }
 
                 if (this.isBoosting && this.fuel > 0) {
-                    const accel = 400;
+                    const accel = 200;
                     this.velocity.x += Math.cos(noseAngle) * accel * deltaSeconds;
                     this.velocity.y += Math.sin(noseAngle) * accel * deltaSeconds;
                     this.fuel -= 12 * deltaSeconds;
