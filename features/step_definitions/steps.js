@@ -320,6 +320,15 @@ Then('menu music should be playing', async () => {
     });
   });
 
+  When('I spawn a planet offset by {int} {int} from the ship', async (dx, dy) => {
+    await page.waitForFunction(() => window.gameScene && window.gameScene.planets);
+    await page.evaluate(({ dx, dy }) => {
+      const gs = window.gameScene;
+      const p = gs.add.circle(gs.ship.x + dx, gs.ship.y + dy, 60, 0x6666ff);
+      gs.planets.push({ sprite: p, radius: 60 });
+    }, { dx, dy });
+  });
+
   Then('the game should be over', async () => {
     await page.waitForFunction(() => window.gameScene?.gameOver);
   });
