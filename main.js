@@ -25,6 +25,13 @@
         window.audioElements = { menuMusic, playTracks, sfx };
         menuMusic.play().catch(() => {});
 
+        const gameOverBox = document.getElementById('game-over');
+        function showGameOver(msg) {
+            gameOverBox.textContent = msg;
+            gameOverBox.style.display = 'flex';
+            gameOverBox.onclick = () => window.location.reload();
+        }
+
         function playTick() {
             sfx.tick.currentTime = 0;
             sfx.tick.play().catch(() => {});
@@ -101,7 +108,7 @@
                 this.spawnOrb = (color, t) => {
                     const x = Phaser.Math.Between(0, this.scale.width);
                     const y = Phaser.Math.Between(0, this.scale.height);
-                    const radius = 10;
+                    const radius = 15;
                     const orb = this.add.circle(x, y, radius, color);
                     orb.setScale(0);
                     const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
@@ -219,8 +226,7 @@
                     window.currentGameplayMusic?.pause();
                     sfx.boost.pause();
                     sfx.boost.currentTime = 0;
-                    alert('Time Up!');
-                    window.location.reload();
+                    showGameOver('Game Over! Your time ran out.');
                     return;
                 }
                 if (this.timeRemaining <= 10 && !this.urgentStarted) {
@@ -244,7 +250,7 @@
                     const accel = 300;
                     this.velocity.x += Math.cos(noseAngle) * accel * deltaSeconds;
                     this.velocity.y += Math.sin(noseAngle) * accel * deltaSeconds;
-                    this.fuel -= 20 * deltaSeconds;
+                    this.fuel -= 15 * deltaSeconds;
                     if (this.fuel < 0) {
                         this.fuel = 0;
                         this.isBoosting = false;
@@ -360,8 +366,7 @@
                         window.currentGameplayMusic?.pause();
                         sfx.boost.pause();
                         sfx.boost.currentTime = 0;
-                        alert('Game Over');
-                        window.location.reload();
+                        showGameOver('Game Over! You died.');
                         return;
                     }
                 }
@@ -404,7 +409,7 @@
 
                 this.ship.x += this.velocity.x * deltaSeconds;
                 this.ship.y += this.velocity.y * deltaSeconds;
-                this.velocity.scale(0.99);
+                this.velocity.scale(0.995);
 
                 const width = this.scale.width;
                 const height = this.scale.height;
@@ -421,7 +426,7 @@
             }
         }
 
-        document.getElementById('start-button').addEventListener('click', function() {
+        document.getElementById('start-screen').addEventListener('click', function() {
             document.getElementById('start-screen').style.display = 'none';
             const promo = document.getElementById('promo-animation');
             promo.style.display = 'flex';

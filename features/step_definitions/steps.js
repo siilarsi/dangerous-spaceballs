@@ -54,8 +54,8 @@ Given('I open the game page', async () => {
   await page.goto('file://' + filePath);
 });
 
-When('I click the start button', async () => {
-  await page.click('#start-button');
+When('I click the start screen', async () => {
+  await page.click('#start-screen');
 });
 
 Then('the promo animation should be shown', async () => {
