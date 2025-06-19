@@ -315,18 +315,50 @@ Then('menu music should be playing', async () => {
     await page.waitForFunction(() => window.gameScene && window.gameScene.planets);
     await page.evaluate(() => {
       const gs = window.gameScene;
-      const p = gs.add.circle(gs.ship.x, gs.ship.y, 80, 0x6666ff);
-      gs.planets.push({ sprite: p, radius: 80 });
+      const pr = 100;
+      const atmoKey = `bdd-atmo-${gs.planets.length}`;
+      const atmoRadius = pr * 1.5;
+      const size = atmoRadius * 2;
+      const tex = gs.textures.createCanvas(atmoKey, size, size);
+      const ctx = tex.getContext();
+      const grad = ctx.createRadialGradient(size / 2, size / 2, pr, size / 2, size / 2, atmoRadius);
+      grad.addColorStop(0, 'rgba(102,102,255,0.4)');
+      grad.addColorStop(1, 'rgba(102,102,255,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, atmoRadius, 0, Math.PI * 2);
+      ctx.fill();
+      tex.refresh();
+      const atmo = gs.add.image(gs.ship.x, gs.ship.y, atmoKey);
+      atmo.setDepth(-1);
+      const p = gs.add.circle(gs.ship.x, gs.ship.y, pr, 0x6666ff);
+      gs.planets.push({ sprite: p, radius: pr, atmosphere: atmo });
     });
   });
 
   When('I spawn a planet offset by {int} {int} from the ship', async (dx, dy) => {
     await page.waitForFunction(() => window.gameScene && window.gameScene.planets);
-    await page.evaluate(({ dx, dy }) => {
-      const gs = window.gameScene;
-      const p = gs.add.circle(gs.ship.x + dx, gs.ship.y + dy, 80, 0x6666ff);
-      gs.planets.push({ sprite: p, radius: 80 });
-    }, { dx, dy });
+  await page.evaluate(({ dx, dy }) => {
+    const gs = window.gameScene;
+    const pr = 100;
+    const atmoKey = `bdd-atmo-${gs.planets.length}`;
+    const atmoRadius = pr * 1.5;
+    const size = atmoRadius * 2;
+    const tex = gs.textures.createCanvas(atmoKey, size, size);
+    const ctx = tex.getContext();
+    const grad = ctx.createRadialGradient(size / 2, size / 2, pr, size / 2, size / 2, atmoRadius);
+    grad.addColorStop(0, 'rgba(102,102,255,0.4)');
+    grad.addColorStop(1, 'rgba(102,102,255,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, atmoRadius, 0, Math.PI * 2);
+    ctx.fill();
+    tex.refresh();
+    const atmo = gs.add.image(gs.ship.x + dx, gs.ship.y + dy, atmoKey);
+    atmo.setDepth(-1);
+    const p = gs.add.circle(gs.ship.x + dx, gs.ship.y + dy, pr, 0x6666ff);
+    gs.planets.push({ sprite: p, radius: pr, atmosphere: atmo });
+  }, { dx, dy });
   });
 
   Then('the planet radius should be {int}', async expected => {

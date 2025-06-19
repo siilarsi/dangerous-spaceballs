@@ -92,15 +92,31 @@
                 // Planet obstacles
                 this.planets = [];
                 this.gravityStrength = 3000;
-                const pr = 80;
+                const pr = 100;
                 const positions = [
-                    { x: 80, y: 80 },
-                    { x: this.scale.width - 80, y: 80 },
-                    { x: this.scale.width / 2, y: this.scale.height - 80 }
+                    { x: pr, y: pr },
+                    { x: this.scale.width - pr, y: pr },
+                    { x: this.scale.width / 2, y: this.scale.height - pr }
                 ];
-                for (const pos of positions) {
+                for (let i = 0; i < positions.length; i++) {
+                    const pos = positions[i];
+                    const atmoKey = `atmo-${i}`;
+                    const atmoRadius = pr * 1.5;
+                    const size = atmoRadius * 2;
+                    const tex = this.textures.createCanvas(atmoKey, size, size);
+                    const ctx = tex.getContext();
+                    const grad = ctx.createRadialGradient(size / 2, size / 2, pr, size / 2, size / 2, atmoRadius);
+                    grad.addColorStop(0, 'rgba(102,102,255,0.4)');
+                    grad.addColorStop(1, 'rgba(102,102,255,0)');
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.arc(size / 2, size / 2, atmoRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                    tex.refresh();
+                    const atmosphere = this.add.image(pos.x, pos.y, atmoKey);
+                    atmosphere.setDepth(-1);
                     const planet = this.add.circle(pos.x, pos.y, pr, 0x6666ff);
-                    this.planets.push({ sprite: planet, radius: pr });
+                    this.planets.push({ sprite: planet, radius: pr, atmosphere });
                 }
 
                 this.spawnOrb = (color, t) => {
