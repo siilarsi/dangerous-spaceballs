@@ -95,7 +95,7 @@ Then('the flame should be visible', async () => {
 
 Then('the fuel should decrease', async () => {
   const fuel = await page.evaluate(() => window.gameScene.fuel);
-  if (fuel >= 150) {
+  if (fuel >= 200) {
     throw new Error('Fuel did not decrease');
   }
 });
@@ -309,4 +309,17 @@ Then('menu music should be playing', async () => {
     if (ammo !== initialAmmo + 15) {
       throw new Error('Ammo did not increase by 15');
     }
+  });
+
+  When('I spawn a planet on the ship', async () => {
+    await page.waitForFunction(() => window.gameScene && window.gameScene.planets);
+    await page.evaluate(() => {
+      const gs = window.gameScene;
+      const p = gs.add.circle(gs.ship.x, gs.ship.y, 60, 0x6666ff);
+      gs.planets.push({ sprite: p, radius: 60 });
+    });
+  });
+
+  Then('the game should be over', async () => {
+    await page.waitForFunction(() => window.gameScene?.gameOver);
   });

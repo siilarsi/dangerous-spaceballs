@@ -42,7 +42,8 @@
                 this.velocity = new Phaser.Math.Vector2(0, 0);
                 this.isBoosting = false;
                 this.isFiring = false;
-                this.fuel = 150;
+                this.maxFuel = 200;
+                this.fuel = this.maxFuel;
                 this.ammo = 50;
                 this.fireRate = 100;
                 this.lastFired = 0;
@@ -80,10 +81,20 @@
                 };
                 this.showLevelBanner(1);
 
+                // Planet obstacles
+                this.planets = [];
+                for (let i = 0; i < 2; i++) {
+                    const pr = 60;
+                    const px = Phaser.Math.Between(pr, this.scale.width - pr);
+                    const py = Phaser.Math.Between(pr, this.scale.height - pr);
+                    const planet = this.add.circle(px, py, pr, 0x6666ff);
+                    this.planets.push({ sprite: planet, radius: pr });
+                }
+
                 this.spawnOrb = (color, t) => {
                     const x = Phaser.Math.Between(0, this.scale.width);
                     const y = Phaser.Math.Between(0, this.scale.height);
-                    const radius = 15;
+                    const radius = 25;
                     const orb = this.add.circle(x, y, radius, color);
                     orb.setScale(0);
                     const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
@@ -220,7 +231,9 @@
 
                 if (this.isFiring && this.ammo > 0 && time > this.lastFired + this.fireRate) {
                     const angle = Phaser.Math.Angle.Between(this.ship.x, this.ship.y, this.reticle.x, this.reticle.y);
-                    const bullet = this.add.rectangle(this.ship.x, this.ship.y, 4, 2, 0xff0000);
+                    const bullet = this.add.rectangle(this.ship.x, this.ship.y, 8, 4, 0xff0000);
+                    bullet.setStrokeStyle(1, 0xffffff);
+                    bullet.setBlendMode(Phaser.BlendModes.ADD);
                     const speed = 600;
                     this.bullets.push({ sprite: bullet, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed });
                     this.lastFired = time;
@@ -233,7 +246,7 @@
                     const accel = 400;
                     this.velocity.x += Math.cos(noseAngle) * accel * deltaSeconds;
                     this.velocity.y += Math.sin(noseAngle) * accel * deltaSeconds;
-                    this.fuel -= 15 * deltaSeconds;
+                    this.fuel -= 12 * deltaSeconds;
                     if (this.fuel < 0) {
                         this.fuel = 0;
                         this.isBoosting = false;
@@ -265,6 +278,15 @@
                             this.handleOrbHit(o.sprite.fillColor, o.sprite.x, o.sprite.y, time);
                             o.sprite.destroy();
                             this.orbs.splice(j, 1);
+                            b.sprite.destroy();
+                            this.bullets.splice(i, 1);
+                            break;
+                        }
+                    }
+                    for (let p of this.planets) {
+                        const dxp = b.sprite.x - p.sprite.x;
+                        const dyp = b.sprite.y - p.sprite.y;
+                        if (dxp * dxp + dyp * dyp <= p.radius * p.radius) {
                             b.sprite.destroy();
                             this.bullets.splice(i, 1);
                             break;
@@ -335,6 +357,15 @@
                             o.sprite.y = this.scale.height - radius;
                         }
                     }
+                    for (let p of this.planets) {
+                        const dxp = o.sprite.x - p.sprite.x;
+                        const dyp = o.sprite.y - p.sprite.y;
+                        if (dxp * dxp + dyp * dyp <= (radius * o.sprite.scaleX + p.radius) * (radius * o.sprite.scaleX + p.radius)) {
+                            o.sprite.destroy();
+                            this.orbs.splice(i, 1);
+                            break;
+                        }
+                    }
                     // Check ship collision
                     const shipR = 20;
                     const dx = this.ship.x - o.sprite.x;
@@ -368,7 +399,7 @@
                     const dyP = this.ship.y - p.sprite.y;
                     if (dxP * dxP + dyP * dyP <= 28 * 28) {
                         if (p.type === 'ammo') this.ammo += 15;
-                        if (p.type === 'fuel') this.fuel = Math.min(100, this.fuel + 15);
+                        if (p.type === 'fuel') this.fuel = Math.min(this.maxFuel, this.fuel + 25);
                         if (p.type === 'time') this.timeRemaining += 15;
                         const txt = this.add.text(p.sprite.x, p.sprite.y, '+15', { font: '16px Arial', color: '#ffffff' });
                         txt.setOrigin(0.5);
@@ -395,6 +426,24 @@
                 this.ship.y += this.velocity.y * deltaSeconds;
                 this.velocity.scale(0.998);
 
+                for (let p of this.planets) {
+                    const dxp = this.ship.x - p.sprite.x;
+                    const dyp = this.ship.y - p.sprite.y;
+                    const shipR = 20;
+                    if (dxp * dxp + dyp * dyp <= (shipR + p.radius) * (shipR + p.radius)) {
+                        clearInterval(this.urgentInterval);
+                        document.body.classList.remove('urgent');
+                        sfx.crash.currentTime = 0;
+                        sfx.crash.play().catch(() => {});
+                        window.currentGameplayMusic?.pause();
+                        sfx.boost.pause();
+                        sfx.boost.currentTime = 0;
+                        showGameOver('Game Over! You crashed into a planet.');
+                        this.gameOver = true;
+                        return;
+                    }
+                }
+
                 const width = this.scale.width;
                 const height = this.scale.height;
                 if (this.ship.x < 0) this.ship.x = width;
@@ -402,7 +451,10 @@
                 if (this.ship.y < 0) this.ship.y = height;
                 if (this.ship.y > height) this.ship.y = 0;
 
-                document.getElementById('fuel-bar').style.width = this.fuel + '%';
+                const fuelPct = Math.max(0, Math.min(100, this.fuel / this.maxFuel * 100));
+                const fb = document.getElementById('fuel-bar');
+                fb.style.width = fuelPct + '%';
+                fb.textContent = Math.round(fuelPct) + '%';
                 document.getElementById('ammo-count').textContent = this.ammo;
                 document.getElementById('score').textContent = this.score;
                 document.getElementById('streak').textContent = this.streak;
