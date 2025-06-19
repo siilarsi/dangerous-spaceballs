@@ -499,3 +499,11 @@ Then('the ship speed should be below {int}', async max => {
     throw new Error(`Ship speed ${speed} not below ${max}`);
   }
 });
+
+When('I open the shop tab', async () => {
+  await page.click('#shop-tab');
+});
+
+Then('the shop should list upgrades', async () => {
+  await page.waitForSelector('#shop-panel .shop-item');
+});
