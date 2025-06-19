@@ -323,3 +323,14 @@ Then('menu music should be playing', async () => {
   Then('the game should be over', async () => {
     await page.waitForFunction(() => window.gameScene?.gameOver);
   });
+
+  When('I reload the page', async () => {
+    await page.reload({ waitUntil: 'load' });
+  });
+
+  Then('the high score should be {int}', async expected => {
+    const val = await page.$eval('#highscore-value', el => parseInt(el.textContent));
+    if (val !== expected) {
+      throw new Error(`Expected high score ${expected} but got ${val}`);
+    }
+  });

@@ -1,8 +1,16 @@
         const { menuMusic, playTracks, sfx } = window.audioElements;
         window.gamePaused = false;
 
+        const storedHigh = parseInt(localStorage.getItem('highscore') || '0');
+        document.getElementById('highscore-value').textContent = storedHigh;
+
         const gameOverBox = document.getElementById('game-over');
         function showGameOver(msg) {
+            const finalScore = window.gameScene?.score || 0;
+            const prev = parseInt(localStorage.getItem('highscore') || '0');
+            if (finalScore > prev) {
+                localStorage.setItem('highscore', finalScore);
+            }
             gameOverBox.textContent = msg;
             gameOverBox.style.display = 'flex';
             gameOverBox.onclick = () => window.location.reload();

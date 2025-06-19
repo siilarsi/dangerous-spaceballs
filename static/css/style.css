@@ -16,6 +16,15 @@ body, html {
     align-items: center;
     background: url('../images/promo.webp') center center / cover no-repeat;
 }
+#highscore-display {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+}
 #promo-animation {
     position: absolute;
     top: 0;
