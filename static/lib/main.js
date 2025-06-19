@@ -11,6 +11,29 @@
         window.permanentUpgrades = JSON.parse(localStorage.getItem('permanentUpgrades') || '[]');
         window.sessionUpgrades = JSON.parse(sessionStorage.getItem('sessionUpgrades') || '[]');
 
+        window.baseStats = {
+            maxFuel: 200,
+            ammo: 50,
+            boostThrust: 200,
+            shieldDuration: 0
+        };
+
+        function updateInventoryPanel() {
+            let fuel = window.baseStats.maxFuel;
+            let ammo = window.baseStats.ammo;
+            let thrust = window.baseStats.boostThrust;
+            let shield = window.baseStats.shieldDuration;
+            const active = new Set([...window.permanentUpgrades, ...window.sessionUpgrades]);
+            if (active.has('extra_fuel')) fuel += 50;
+            if (active.has('max_ammo')) ammo = 100;
+            document.getElementById('inv-fuel').textContent = fuel;
+            document.getElementById('inv-ammo').textContent = ammo;
+            document.getElementById('inv-thrust').textContent = thrust;
+            document.getElementById('inv-shield').textContent = shield;
+        }
+
+        updateInventoryPanel();
+
         const shopItems = [
             {
                 id: 'max_ammo',
@@ -101,6 +124,7 @@
                 }
                 if (item.stock) item.stock -= 1;
                 renderShop();
+                updateInventoryPanel();
             }
         }
 
@@ -151,9 +175,10 @@
                 this.velocity = new Phaser.Math.Vector2(0, 0);
                 this.isBoosting = false;
                 this.isFiring = false;
-                this.maxFuel = 200;
+                this.maxFuel = window.baseStats.maxFuel;
                 this.fuel = this.maxFuel;
-                this.ammo = 50;
+                this.ammo = window.baseStats.ammo;
+                this.boostThrust = window.baseStats.boostThrust;
                 this.credits = 0;
                 this.fireRate = 100;
                 this.lastFired = 0;
@@ -394,7 +419,7 @@
                 }
 
                 if (this.isBoosting && this.fuel > 0) {
-                    const accel = 200;
+                    const accel = this.boostThrust;
                     this.velocity.x += Math.cos(noseAngle) * accel * deltaSeconds;
                     this.velocity.y += Math.sin(noseAngle) * accel * deltaSeconds;
                     this.fuel -= 12 * deltaSeconds;
