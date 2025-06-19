@@ -2,4 +2,5 @@
 - After making code changes, run `npm run check` again to ensure the unit tests pass.
 - If you changed or added features, run the BDD tests (`npm test`) once after your modifications.
 - If tests fail, update the code or tests so that they pass before committing.
+- If any of the tests are failing, investigate why they fail and try to fix the underlying issue.
 - Each new or modified feature must include a new BDD style test or an update to an existing one.
