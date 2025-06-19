@@ -20,6 +20,10 @@ Feature: Start the game
     Then the game should appear after a short delay
     And the star background should cover the game area
 
+  Scenario: Legend hidden before starting the game
+    Given I open the game page
+    Then the legend should not be visible
+
   Scenario: Legend displayed on start
     Given I open the game page
     When I click the start screen

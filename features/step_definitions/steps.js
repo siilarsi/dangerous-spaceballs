@@ -257,6 +257,13 @@ Then('menu music should be playing', async () => {
     }
   });
 
+  Then('the legend should not be visible', async () => {
+    const display = await page.$eval('#legend', el => getComputedStyle(el).display);
+    if (display !== 'none') {
+      throw new Error('Legend should be hidden');
+    }
+  });
+
   When('I move the pointer to offset {int} {int}', async (dx, dy) => {
     await page.waitForFunction(() => window.gameScene);
     const canvas = await page.waitForSelector('#game canvas', { state: 'attached' });
