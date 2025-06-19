@@ -128,6 +128,22 @@
             }
         }
 
+        function resetProgress() {
+            localStorage.removeItem('highscore');
+            localStorage.removeItem('credits');
+            localStorage.removeItem('permanentUpgrades');
+            sessionStorage.removeItem('sessionUpgrades');
+            window.totalCredits = 0;
+            window.permanentUpgrades = [];
+            window.sessionUpgrades = [];
+            document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => {
+                el.textContent = 0;
+            });
+            document.getElementById('highscore-value').textContent = 0;
+            updateInventoryPanel();
+            renderShop();
+        }
+
         const gameOverBox = document.getElementById('game-over');
         function showGameOver(msg) {
             const finalScore = window.gameScene?.score || 0;
@@ -683,6 +699,7 @@
             renderShop();
             document.getElementById('shop-panel').style.display = 'block';
         });
+        document.getElementById('reset-progress').addEventListener('click', resetProgress);
         document.getElementById('close-shop').addEventListener('click', () => {
             document.getElementById('shop-panel').style.display = 'none';
         });

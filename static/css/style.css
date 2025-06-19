@@ -58,6 +58,29 @@ body, html {
     width: 320px;
 }
 
+#shop-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.reset-btn {
+    background: #f44336;
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 0 5px #f44336;
+    transition: box-shadow 0.2s;
+}
+
+.reset-btn:hover {
+    box-shadow: 0 0 10px #fff;
+}
+
 #inventory-panel {
     position: absolute;
     top: 20px;
