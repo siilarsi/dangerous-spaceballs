@@ -1,4 +1,4 @@
-const { Given, When, Then, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber');
+const { Given, When, Then, After, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber');
 const { chromium } = require('playwright');
 const path = require('path');
 
@@ -103,6 +103,10 @@ Then('the ammo should decrease', async () => {
   if (ammo >= 50) {
     throw new Error('Ammo did not decrease');
   }
+});
+
+After(async () => {
+  await browser?.close();
 });
 
 AfterAll(async () => {
