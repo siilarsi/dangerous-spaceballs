@@ -40,11 +40,12 @@
                 this.velocity = new Phaser.Math.Vector2(0, 0);
                 this.isBoosting = false;
                 this.isFiring = false;
-                this.fuel = 100;
+                this.fuel = 150;
                 this.ammo = 50;
                 this.fireRate = 100;
                 this.lastFired = 0;
                 this.bullets = [];
+                this.gameOver = false;
 
                 // Timer and power-ups
                 this.timeRemaining = 60;
@@ -176,6 +177,9 @@
                     this.startTime = time;
                     this.nextLevelTime = time + this.levelDuration;
                 }
+                if (this.gameOver) {
+                    return;
+                }
                 // Smoothly rotate the ship to face the pointer
                 const targetAngle = Phaser.Math.Angle.Between(
                     this.ship.x,
@@ -203,6 +207,7 @@
                     sfx.boost.pause();
                     sfx.boost.currentTime = 0;
                     showGameOver('Game Over! Your time ran out.');
+                    this.gameOver = true;
                     return;
                 }
                 if (this.timeRemaining <= 10 && !this.urgentStarted) {
@@ -223,7 +228,7 @@
                 }
 
                 if (this.isBoosting && this.fuel > 0) {
-                    const accel = 300;
+                    const accel = 400;
                     this.velocity.x += Math.cos(noseAngle) * accel * deltaSeconds;
                     this.velocity.y += Math.sin(noseAngle) * accel * deltaSeconds;
                     this.fuel -= 15 * deltaSeconds;
@@ -343,6 +348,7 @@
                         sfx.boost.pause();
                         sfx.boost.currentTime = 0;
                         showGameOver('Game Over! You died.');
+                        this.gameOver = true;
                         return;
                     }
                 }
@@ -385,7 +391,7 @@
 
                 this.ship.x += this.velocity.x * deltaSeconds;
                 this.ship.y += this.velocity.y * deltaSeconds;
-                this.velocity.scale(0.995);
+                this.velocity.scale(0.998);
 
                 const width = this.scale.width;
                 const height = this.scale.height;
