@@ -12,10 +12,36 @@
         window.sessionUpgrades = JSON.parse(sessionStorage.getItem('sessionUpgrades') || '[]');
 
         const shopItems = [
-            { id: 'max_ammo', name: 'Increase Max Ammo', cost: 5, permanent: true },
-            { id: 'extra_fuel', name: 'Extra Starting Fuel', cost: 3 },
-            { id: 'fast_reload', name: 'Faster Reload', cost: 4 },
-            { id: 'shield', name: 'Temporary Shield', cost: 2, stock: 1 }
+            {
+                id: 'max_ammo',
+                name: 'Increase Max Ammo',
+                desc: 'Raise your ammo cap to 100.',
+                icon: '🔫',
+                cost: 5,
+                permanent: true
+            },
+            {
+                id: 'extra_fuel',
+                name: 'Extra Starting Fuel',
+                desc: 'Begin with additional fuel reserves.',
+                icon: '⛽',
+                cost: 3
+            },
+            {
+                id: 'fast_reload',
+                name: 'Faster Reload',
+                desc: 'Reduce time between shots.',
+                icon: '⚡',
+                cost: 4
+            },
+            {
+                id: 'shield',
+                name: 'Temporary Shield',
+                desc: 'Absorb the next hit you take.',
+                icon: '🛡️',
+                cost: 2,
+                stock: 1
+            }
         ];
 
         function renderShop() {
@@ -24,10 +50,34 @@
             shopItems.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'shop-item';
+
+                const icon = document.createElement('div');
+                icon.className = 'icon';
+                icon.textContent = item.icon;
+
+                const info = document.createElement('div');
+                info.className = 'info';
+                const title = document.createElement('div');
+                title.className = 'name';
+                title.textContent = item.name;
+                const desc = document.createElement('div');
+                desc.className = 'desc';
+                desc.textContent = item.desc;
+                info.appendChild(title);
+                info.appendChild(desc);
+
+                const price = document.createElement('div');
+                price.className = 'price-badge';
+                price.textContent = item.cost;
+
                 const btn = document.createElement('button');
-                btn.textContent = `Buy (${item.cost})`;
+                btn.className = 'buy-btn';
+                btn.textContent = 'Buy';
                 btn.onclick = () => purchase(item);
-                div.textContent = `${item.name} - ${item.cost} credits `;
+
+                div.appendChild(icon);
+                div.appendChild(info);
+                div.appendChild(price);
                 div.appendChild(btn);
                 container.appendChild(div);
             });

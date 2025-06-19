@@ -55,9 +55,50 @@ body, html {
     display: none;
     text-align: left;
     border-radius: 8px;
+    width: 320px;
 }
 .shop-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 8px;
     margin-bottom: 10px;
+}
+.shop-item .icon {
+    font-size: 24px;
+}
+.shop-item .info {
+    flex: 1;
+}
+.shop-item .name {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+.shop-item .desc {
+    font-size: 12px;
+    opacity: 0.8;
+}
+.shop-item .price-badge {
+    background: #ff9800;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+.shop-item .buy-btn {
+    margin-left: 5px;
+    background: #4caf50;
+    border: none;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 0 5px #4caf50;
+    transition: box-shadow 0.2s;
+}
+.shop-item .buy-btn:hover {
+    box-shadow: 0 0 10px #fff;
 }
 #promo-animation {
     position: absolute;
@@ -77,6 +118,9 @@ body, html {
 }
 
 #rules {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
     background: rgba(0, 0, 0, 0.6);
     padding: 20px;
     border-radius: 10px;
