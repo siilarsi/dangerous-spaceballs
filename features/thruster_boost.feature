@@ -18,3 +18,11 @@ Feature: Thruster Boost
     When I release the right mouse button
     When I wait for 1000 ms
     Then the ship should have moved
+
+  Scenario: Boosting results in lower top speed
+    Given I open the game page
+    When I click the start screen
+    Then the game should appear after a short delay
+    When I hold the right mouse button for 500 ms
+    When I release the right mouse button
+    Then the ship speed should be below 150

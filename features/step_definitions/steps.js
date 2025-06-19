@@ -402,3 +402,15 @@ Then('the orb should have moved', async () => {
     throw new Error('Orb did not move');
   }
 });
+
+Then('the ship speed should be below {int}', async max => {
+  await page.waitForFunction(() => window.gameScene && window.gameScene.velocity);
+  const vel = await page.evaluate(() => ({
+    x: window.gameScene.velocity.x,
+    y: window.gameScene.velocity.y
+  }));
+  const speed = Math.hypot(vel.x, vel.y);
+  if (speed >= max) {
+    throw new Error(`Ship speed ${speed} not below ${max}`);
+  }
+});
