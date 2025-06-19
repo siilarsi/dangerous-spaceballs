@@ -106,7 +106,7 @@
                 this.spawnOrb = (color, t) => {
                     const x = Phaser.Math.Between(0, this.scale.width);
                     const y = Phaser.Math.Between(0, this.scale.height);
-                    const radius = 25;
+                    const radius = 20;
                     const orb = this.add.circle(x, y, radius, color);
                     orb.setScale(0);
                     const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
