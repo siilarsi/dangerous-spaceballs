@@ -5,4 +5,4 @@ Feature: Level progression
     When I click the start button
     Then the game should appear after a short delay
     When I wait for 600 ms
-    Then the level should be 5
+    Then the level should be 6

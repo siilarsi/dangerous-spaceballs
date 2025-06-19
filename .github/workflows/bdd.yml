@@ -1,0 +1,38 @@
+name: BDD Tests
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: |
+          npm install
+          npx playwright install --with-deps
+      - name: Run BDD tests
+        id: bdd
+        run: |
+          start=$(date +%s)
+          npm test
+          end=$(date +%s)
+          echo $((end - start)) > duration.txt
+      - name: Generate report
+        if: always()
+        env:
+          WORKFLOW_FILE: bdd.yml
+        run: |
+          node scripts/generate-duration-report.js
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: bdd-duration-report
+          path: bdd-duration-report.html
