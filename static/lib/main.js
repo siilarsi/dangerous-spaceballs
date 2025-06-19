@@ -91,11 +91,15 @@
 
                 // Planet obstacles
                 this.planets = [];
-                for (let i = 0; i < 2; i++) {
-                    const pr = 60;
-                    const px = Phaser.Math.Between(pr, this.scale.width - pr);
-                    const py = Phaser.Math.Between(pr, this.scale.height - pr);
-                    const planet = this.add.circle(px, py, pr, 0x6666ff);
+                this.gravityStrength = 3000;
+                const pr = 60;
+                const positions = [
+                    { x: 80, y: 80 },
+                    { x: this.scale.width - 80, y: 80 },
+                    { x: this.scale.width / 2, y: this.scale.height - 80 }
+                ];
+                for (const pos of positions) {
+                    const planet = this.add.circle(pos.x, pos.y, pr, 0x6666ff);
                     this.planets.push({ sprite: planet, radius: pr });
                 }
 
@@ -270,6 +274,30 @@
                     this.flame.rotation = this.ship.rotation;
                     this.flame.x = this.ship.x - Math.cos(noseAngle) * 20;
                     this.flame.y = this.ship.y - Math.sin(noseAngle) * 20;
+                }
+
+                for (let p of this.planets) {
+                    const dx = p.sprite.x - this.ship.x;
+                    const dy = p.sprite.y - this.ship.y;
+                    const distSq = dx * dx + dy * dy;
+                    if (distSq > 1) {
+                        const acc = this.gravityStrength / distSq;
+                        this.velocity.x += dx * acc * deltaSeconds;
+                        this.velocity.y += dy * acc * deltaSeconds;
+                    }
+                }
+
+                for (let o of this.orbs) {
+                    for (let p of this.planets) {
+                        const dx = p.sprite.x - o.sprite.x;
+                        const dy = p.sprite.y - o.sprite.y;
+                        const distSq = dx * dx + dy * dy;
+                        if (distSq > 1) {
+                            const acc = this.gravityStrength / distSq;
+                            o.vx += dx * acc * deltaSeconds;
+                            o.vy += dy * acc * deltaSeconds;
+                        }
+                    }
                 }
 
                 for (let i = this.bullets.length - 1; i >= 0; i--) {
