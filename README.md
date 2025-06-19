@@ -29,7 +29,18 @@ npx playwright install
 - **Unit tests**: `npm run check`
 - **BDD tests**: `npm test`
 
+BDD tests run in parallel by default. Set the environment variable
+`CUCUMBER_PARALLEL` to control how many worker processes are used:
+
+```bash
+# run with four workers
+CUCUMBER_PARALLEL=4 npm test
+```
+
 
 ## BDD duration report
 
-When the `BDD Tests` workflow runs on pushes to `main`, it uploads an artifact named `bdd-duration-report`. Download the artifact from the workflow run summary and open the included `bdd-duration-report.html` file in a browser to view a chart of recent BDD test durations.
+When the `BDD Tests` workflow runs on pushes to `main`, it records how long the
+tests took in a `bdd-duration` artifact. It also uploads a `bdd-duration-report`
+artifact containing `bdd-duration-report.html`. Download this file from the
+workflow run summary to view a chart of recent BDD test durations.
