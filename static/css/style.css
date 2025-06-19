@@ -14,7 +14,7 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url('images/promo.webp') center center / cover no-repeat;
+    background: url('../images/promo.webp') center center / cover no-repeat;
 }
 #promo-animation {
     position: absolute;
@@ -36,6 +36,7 @@ body, html {
     width: 100vw;
     height: 100vh;
     display: none;
+    background: url('../images/stars.webp') center center / cover no-repeat;
 }
 #fuel-container {
     position: absolute;

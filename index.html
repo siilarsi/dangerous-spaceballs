@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dangerous Spaceballs</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
     <div id="start-screen"></div>
     <div id="game-over"></div>
     <div id="promo-animation">
-        <img src="images/promo_animated.webp" alt="Promo Animation">
+        <img src="static/images/promo_animated.webp" alt="Promo Animation">
     </div>
     <div id="game"></div>
     <div id="fuel-container"><div id="fuel-bar"></div></div>
     <div id="ammo-container">Ammo: <span id="ammo-count">0</span></div>
     <div id="score-container">Score: <span id="score">0</span> | Streak: <span id="streak">0</span> | Time: <span id="time-remaining">60</span></div>
     <div id="level-banner"></div>
-    <script src="lib/phaser.min.js"></script>
-    <script src="audio.js"></script>
+    <script src="static/lib/phaser.min.js"></script>
+    <script src="static/lib/audio.js"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         const ld = parseInt(params.get('levelDuration'));
@@ -26,6 +26,6 @@
             window.levelDuration = ld;
         }
     </script>
-    <script src="main.js"></script>
+    <script src="static/lib/main.js"></script>
 </body>
 </html>
