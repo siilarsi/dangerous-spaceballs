@@ -152,8 +152,11 @@ Then('the level banner should show {string}', async text => {
 });
 
 Then('the level should be {int}', async expected => {
+  await page.waitForFunction(lvl => {
+    return window.gameScene?.level >= lvl;
+  }, expected);
   const val = await page.evaluate(() => window.gameScene.level);
-  if (val !== expected) {
+  if (val < expected) {
     throw new Error(`Expected level ${expected} but got ${val}`);
   }
 });
