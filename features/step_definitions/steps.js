@@ -298,9 +298,28 @@ Then('menu music should be playing', async () => {
     await page.evaluate(() => {
       const gs = window.gameScene;
       const time = gs.time.now;
-      const pu = gs.add.circle(gs.ship.x, gs.ship.y, 8, 0xffff00);
-      gs.powerUps.push({ sprite: pu, type: 'ammo', spawnTime: time });
+      const chest = gs.add.container(gs.ship.x, gs.ship.y);
+      const base = gs.add.rectangle(0, 3, 20, 11, 0x8b4513);
+      const lid = gs.add.rectangle(0, -4, 20, 6, 0xffff00);
+      chest.add([base, lid]);
+      gs.powerUps.push({ sprite: chest, type: 'ammo', spawnTime: time });
+      gs.nextPowerUpSpawn = Infinity;
     });
+    await page.waitForTimeout(200);
+  });
+
+  When('I spawn an ammo power-up offset by {int} {int} from the ship', async (dx, dy) => {
+    await page.waitForFunction(() => window.gameScene && window.gameScene.powerUps);
+    await page.evaluate(({ dx, dy }) => {
+      const gs = window.gameScene;
+      const time = gs.time.now;
+      const chest = gs.add.container(gs.ship.x + dx, gs.ship.y + dy);
+      const base = gs.add.rectangle(0, 3, 20, 11, 0x8b4513);
+      const lid = gs.add.rectangle(0, -4, 20, 6, 0xffff00);
+      chest.add([base, lid]);
+      gs.powerUps.push({ sprite: chest, type: 'ammo', spawnTime: time });
+      gs.nextPowerUpSpawn = Infinity;
+    }, { dx, dy });
     await page.waitForTimeout(200);
   });
 
@@ -308,6 +327,20 @@ Then('menu music should be playing', async () => {
     const ammo = await page.evaluate(() => window.gameScene.ammo);
     if (ammo !== initialAmmo + 15) {
       throw new Error('Ammo did not increase by 15');
+    }
+  });
+
+  Then('a power-up should be visible', async () => {
+    const count = await page.evaluate(() => window.gameScene.powerUps.length);
+    if (count === 0) {
+      throw new Error('Power-up not visible');
+    }
+  });
+
+  Then('no power-ups should be visible', async () => {
+    const count = await page.evaluate(() => window.gameScene.powerUps.length);
+    if (count !== 0) {
+      throw new Error('Power-up still visible');
     }
   });
 
