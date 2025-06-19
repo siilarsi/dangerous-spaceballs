@@ -315,8 +315,8 @@ Then('menu music should be playing', async () => {
     await page.waitForFunction(() => window.gameScene && window.gameScene.planets);
     await page.evaluate(() => {
       const gs = window.gameScene;
-      const p = gs.add.circle(gs.ship.x, gs.ship.y, 60, 0x6666ff);
-      gs.planets.push({ sprite: p, radius: 60 });
+      const p = gs.add.circle(gs.ship.x, gs.ship.y, 80, 0x6666ff);
+      gs.planets.push({ sprite: p, radius: 80 });
     });
   });
 
@@ -324,9 +324,20 @@ Then('menu music should be playing', async () => {
     await page.waitForFunction(() => window.gameScene && window.gameScene.planets);
     await page.evaluate(({ dx, dy }) => {
       const gs = window.gameScene;
-      const p = gs.add.circle(gs.ship.x + dx, gs.ship.y + dy, 60, 0x6666ff);
-      gs.planets.push({ sprite: p, radius: 60 });
+      const p = gs.add.circle(gs.ship.x + dx, gs.ship.y + dy, 80, 0x6666ff);
+      gs.planets.push({ sprite: p, radius: 80 });
     }, { dx, dy });
+  });
+
+  Then('the planet radius should be {int}', async expected => {
+    const radius = await page.evaluate(() => {
+      const gs = window.gameScene;
+      const p = gs?.planets?.[gs.planets.length - 1];
+      return p?.radius;
+    });
+    if (radius !== expected) {
+      throw new Error(`Expected planet radius ${expected} but got ${radius}`);
+    }
   });
 
   Then('the game should be over', async () => {
