@@ -29,6 +29,14 @@ npx playwright install
 - **Unit tests**: `npm run check`
 - **BDD tests**: `npm test`
 
+BDD tests run in parallel by default. Set the environment variable
+`CUCUMBER_PARALLEL` to control how many worker processes are used:
+
+```bash
+# run with four workers
+CUCUMBER_PARALLEL=4 npm test
+```
+
 
 ## BDD duration report
 

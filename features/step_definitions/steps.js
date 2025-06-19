@@ -1,4 +1,4 @@
-const { Given, When, Then, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber');
+const { Given, When, Then, BeforeAll, Before, After, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber');
 const { chromium } = require('playwright');
 const path = require('path');
 
@@ -6,16 +6,26 @@ setDefaultTimeout(60 * 1000);
 
 let browser, page;
 
+BeforeAll(async () => {
+  browser = await chromium.launch({
+    args: ['--no-sandbox', '--ignore-certificate-errors', '--allow-file-access-from-files']
+  });
+});
+
+Before(async () => {
+  const ctx = await browser.newContext();
+  page = await ctx.newPage();
+});
+
+After(async () => {
+  await page?.context()?.close();
+});
+
 Given('the level progression interval is {int} ms', async ms => {
   await page.evaluate(m => { window.levelDuration = m; }, ms);
 });
 
 Given('I open the game page', async () => {
-  browser = await chromium.launch({
-    args: ['--no-sandbox', '--ignore-certificate-errors', '--allow-file-access-from-files']
-  });
-  const ctx = await browser.newContext();
-  page = await ctx.newPage();
   const filePath = path.resolve(__dirname, '../../index.html');
   await page.goto('file://' + filePath);
 });
