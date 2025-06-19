@@ -432,7 +432,6 @@
 
                 this.ship.x += this.velocity.x * deltaSeconds;
                 this.ship.y += this.velocity.y * deltaSeconds;
-                this.velocity.scale(0.998);
 
                 for (let p of this.planets) {
                     const dxp = this.ship.x - p.sprite.x;

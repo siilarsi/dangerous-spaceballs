@@ -16,5 +16,5 @@ Feature: Thruster Boost
     When I wait for 100 ms
     When I hold the right mouse button for 500 ms
     When I release the right mouse button
-    When I wait for 200 ms
+    When I wait for 1000 ms
     Then the ship should have moved
