@@ -355,7 +355,7 @@ Then('menu music should be playing', async () => {
       const tex = gs.textures.createCanvas(atmoKey, size, size);
       const ctx = tex.getContext();
       const grad = ctx.createRadialGradient(size / 2, size / 2, pr, size / 2, size / 2, atmoRadius);
-      grad.addColorStop(0, 'rgba(102,102,255,0.4)');
+      grad.addColorStop(0, 'rgba(102,102,255,0.6)');
       grad.addColorStop(1, 'rgba(102,102,255,0)');
       ctx.fillStyle = grad;
       ctx.beginPath();
@@ -380,7 +380,7 @@ Then('menu music should be playing', async () => {
     const tex = gs.textures.createCanvas(atmoKey, size, size);
     const ctx = tex.getContext();
     const grad = ctx.createRadialGradient(size / 2, size / 2, pr, size / 2, size / 2, atmoRadius);
-    grad.addColorStop(0, 'rgba(102,102,255,0.4)');
+    grad.addColorStop(0, 'rgba(102,102,255,0.6)');
     grad.addColorStop(1, 'rgba(102,102,255,0)');
     ctx.fillStyle = grad;
     ctx.beginPath();
@@ -402,6 +402,19 @@ Then('menu music should be playing', async () => {
     });
     if (radius !== expected) {
       throw new Error(`Expected planet radius ${expected} but got ${radius}`);
+    }
+  });
+
+  Then('planet atmospheres should be visible', async () => {
+    const visible = await page.evaluate(() => {
+      const gs = window.gameScene;
+      if (!gs || !gs.planets) return false;
+      return gs.planets.every(p => {
+        return p.atmosphere && p.atmosphere.alpha > 0 && p.atmosphere.visible;
+      });
+    });
+    if (!visible) {
+      throw new Error('Atmospheres not visible');
     }
   });
 
