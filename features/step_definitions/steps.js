@@ -115,6 +115,10 @@ Then('the ammo should decrease', async () => {
   }
 });
 
+After(async () => {
+  await browser?.close();
+});
+
 AfterAll(async () => {
   await browser?.close();
 });
