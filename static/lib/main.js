@@ -33,6 +33,7 @@
             const game = new Phaser.Game(config);
             document.getElementById('fuel-container').style.display = 'block';
             document.getElementById('ammo-container').style.display = 'block';
+            document.getElementById('credits-container').style.display = 'block';
             document.getElementById('score-container').style.display = 'block';
             document.getElementById('legend').style.display = 'block';
 
@@ -53,6 +54,7 @@
                 this.maxFuel = 200;
                 this.fuel = this.maxFuel;
                 this.ammo = 50;
+                this.credits = 0;
                 this.fireRate = 100;
                 this.lastFired = 0;
                 this.bullets = [];
@@ -147,6 +149,7 @@
                     if (color === 0xff0000) {
                         this.streak += 1;
                         this.score += 10 * this.streak;
+                        this.credits += 1;
                         if (this.streak % 5 === 0) {
                             const txt = this.add.text(x, y, `Streak ${this.streak}!`, { font: '20px Arial', color: '#ff00ff' });
                             txt.setOrigin(0.5);
@@ -164,9 +167,11 @@
                     sfx.explosion.play().catch(() => {});
                     document.getElementById('score').textContent = this.score;
                     document.getElementById('streak').textContent = this.streak;
+                    document.getElementById('credits').textContent = this.credits;
                 };
 
                 document.getElementById('ammo-count').textContent = this.ammo;
+                document.getElementById('credits').textContent = this.credits;
                 this.score = 0;
                 this.streak = 0;
                 document.getElementById('score').textContent = this.score;
@@ -512,6 +517,7 @@
                 document.getElementById('ammo-count').textContent = this.ammo;
                 document.getElementById('score').textContent = this.score;
                 document.getElementById('streak').textContent = this.streak;
+                document.getElementById('credits').textContent = this.credits;
                 document.getElementById('time-remaining').textContent = Math.ceil(this.timeRemaining);
             }
         }

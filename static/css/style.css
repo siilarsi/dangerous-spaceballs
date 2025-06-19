@@ -101,6 +101,15 @@ body, html {
     font-family: Arial, sans-serif;
     display: none;
 }
+#credits-container {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-family: Arial, sans-serif;
+    display: none;
+}
 #score-container {
     position: absolute;
     top: 30px;
