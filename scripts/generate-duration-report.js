@@ -76,6 +76,7 @@ async function main() {
     // ignore
   }
   durations.sort((a, b) => a.run_number - b.run_number);
+  fs.writeFileSync('duration.json', JSON.stringify(durations, null, 2));
   const html = `<!DOCTYPE html>
 <html>
 <head>
