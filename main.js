@@ -65,7 +65,8 @@
 
                 this.level = 1;
                 this.levelDuration = levelDurationMs;
-                this.nextLevelTime = this.time.now + this.levelDuration;
+                this.startTime = null;
+                this.nextLevelTime = null;
                 this.levelBanner = document.getElementById('level-banner');
                 this.showLevelBanner = level => {
                     this.levelBanner.textContent = `Level ${level}`;
@@ -171,6 +172,10 @@
             }
 
             function update(time, delta) {
+                if (this.startTime === null) {
+                    this.startTime = time;
+                    this.nextLevelTime = time + this.levelDuration;
+                }
                 // Smoothly rotate the ship to face the pointer
                 const targetAngle = Phaser.Math.Angle.Between(
                     this.ship.x,

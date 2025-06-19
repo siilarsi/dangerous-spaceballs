@@ -203,10 +203,17 @@ Then('menu music should be playing', async () => {
   }
 });
 
-Then('gameplay music should be playing', async () => {
-  await page.waitForFunction(() => window.currentGameplayMusic);
-  const exists = await page.evaluate(() => !!window.currentGameplayMusic);
-  if (!exists) {
-    throw new Error('Gameplay music not initialized');
-  }
-});
+  Then('gameplay music should be playing', async () => {
+    await page.waitForFunction(() => window.currentGameplayMusic);
+    const exists = await page.evaluate(() => !!window.currentGameplayMusic);
+    if (!exists) {
+      throw new Error('Gameplay music not initialized');
+    }
+  });
+
+  Then('the time remaining should be {int}', async expected => {
+    const val = await page.evaluate(() => Math.ceil(window.gameScene.timeRemaining));
+    if (val !== expected) {
+      throw new Error(`Expected time remaining ${expected} but got ${val}`);
+    }
+  });
