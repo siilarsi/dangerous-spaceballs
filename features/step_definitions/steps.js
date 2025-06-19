@@ -620,3 +620,30 @@ Then('the inventory stat icon for {string} should be {string}', async (label, ex
     throw new Error(`Expected icon ${expected} but got ${actual}`);
   }
 });
+
+Given('the high score is {int}', async val => {
+  await page.evaluate(score => {
+    localStorage.setItem('highscore', score);
+    document.getElementById('highscore-value').textContent = score;
+  }, val);
+});
+
+When('I click the reset button', async () => {
+  await page.click('#reset-progress');
+});
+
+Then('the displayed credits should be {int}', async expected => {
+  const val = await page.$eval('#start-credits-value', el => parseInt(el.textContent));
+  if (val !== expected) {
+    throw new Error(`Expected credits ${expected} but got ${val}`);
+  }
+});
+
+Then('no permanent upgrades should be stored', async () => {
+  const count = await page.evaluate(() => {
+    return JSON.parse(localStorage.getItem('permanentUpgrades') || '[]').length;
+  });
+  if (count !== 0) {
+    throw new Error('Permanent upgrades not cleared');
+  }
+});
