@@ -1,10 +1,34 @@
-const { Given, When, Then, BeforeAll, Before, After, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber');
+const {
+  Given,
+  When,
+  Then,
+  BeforeAll,
+  Before,
+  After,
+  AfterAll,
+  setDefaultTimeout
+} = require('@cucumber/cucumber');
 const { chromium } = require('playwright');
 const path = require('path');
 
 setDefaultTimeout(60 * 1000);
 
-let browser, page;
+let browser, context, page;
+
+BeforeAll(async () => {
+  browser = await chromium.launch({
+    args: ['--no-sandbox', '--ignore-certificate-errors', '--allow-file-access-from-files']
+  });
+});
+
+Before(async () => {
+  context = await browser.newContext();
+  page = await context.newPage();
+});
+
+After(async () => {
+  await context?.close();
+});
 
 BeforeAll(async () => {
   browser = await chromium.launch({
