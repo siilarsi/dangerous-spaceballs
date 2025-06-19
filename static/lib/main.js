@@ -8,8 +8,13 @@
             el.textContent = window.totalCredits;
         });
 
+        window.permanentUpgrades = JSON.parse(localStorage.getItem('permanentUpgrades') || '[]');
+        window.sessionUpgrades = JSON.parse(sessionStorage.getItem('sessionUpgrades') || '[]');
+
         const shopItems = [
             { id: 'max_ammo', name: 'Increase Max Ammo', cost: 5, permanent: true },
+            { id: 'extra_fuel', name: 'Extra Starting Fuel', cost: 3 },
+            { id: 'fast_reload', name: 'Faster Reload', cost: 4 },
             { id: 'shield', name: 'Temporary Shield', cost: 2, stock: 1 }
         ];
 
@@ -29,12 +34,23 @@
         }
 
         function purchase(item) {
-            if (window.totalCredits >= item.cost) {
+            if (window.totalCredits >= item.cost && (!item.stock || item.stock > 0)) {
                 window.totalCredits -= item.cost;
                 localStorage.setItem('credits', window.totalCredits);
                 document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => {
                     el.textContent = window.totalCredits;
                 });
+                if (item.permanent) {
+                    if (!window.permanentUpgrades.includes(item.id)) {
+                        window.permanentUpgrades.push(item.id);
+                        localStorage.setItem('permanentUpgrades', JSON.stringify(window.permanentUpgrades));
+                    }
+                } else {
+                    window.sessionUpgrades.push(item.id);
+                    sessionStorage.setItem('sessionUpgrades', JSON.stringify(window.sessionUpgrades));
+                }
+                if (item.stock) item.stock -= 1;
+                renderShop();
             }
         }
 
@@ -93,6 +109,19 @@
                 this.lastFired = 0;
                 this.bullets = [];
                 this.gameOver = false;
+
+                const active = new Set([...window.permanentUpgrades, ...window.sessionUpgrades]);
+                this.shield = active.has('shield');
+                if (active.has('extra_fuel')) {
+                    this.maxFuel += 50;
+                    this.fuel = this.maxFuel;
+                }
+                if (active.has('fast_reload')) {
+                    this.fireRate = 50;
+                }
+                if (active.has('max_ammo')) {
+                    this.ammo = 100;
+                }
 
                 // Timer and power-ups
                 this.timeRemaining = 60;
@@ -470,18 +499,26 @@
                     const dx = this.ship.x - o.sprite.x;
                     const dy = this.ship.y - o.sprite.y;
                     if (dx * dx + dy * dy <= (shipR + radius * o.sprite.scaleX) * (shipR + radius * o.sprite.scaleX)) {
-                        clearInterval(this.urgentInterval);
-                        document.body.classList.remove('urgent');
-                        sfx.crash.currentTime = 0;
-                        sfx.crash.play().catch(() => {});
-                        sfx.explosion.currentTime = 0;
-                        sfx.explosion.play().catch(() => {});
-                        window.currentGameplayMusic?.pause();
-                        sfx.boost.pause();
-                        sfx.boost.currentTime = 0;
-                        showGameOver('Game Over! You died.');
-                        this.gameOver = true;
-                        return;
+                        if (this.shield) {
+                            this.shield = false;
+                            window.sessionUpgrades = window.sessionUpgrades.filter(u => u !== 'shield');
+                            sessionStorage.setItem('sessionUpgrades', JSON.stringify(window.sessionUpgrades));
+                            o.sprite.destroy();
+                            this.orbs.splice(i, 1);
+                        } else {
+                            clearInterval(this.urgentInterval);
+                            document.body.classList.remove('urgent');
+                            sfx.crash.currentTime = 0;
+                            sfx.crash.play().catch(() => {});
+                            sfx.explosion.currentTime = 0;
+                            sfx.explosion.play().catch(() => {});
+                            window.currentGameplayMusic?.pause();
+                            sfx.boost.pause();
+                            sfx.boost.currentTime = 0;
+                            showGameOver('Game Over! You died.');
+                            this.gameOver = true;
+                            return;
+                        }
                     }
                 }
 
@@ -529,16 +566,22 @@
                     const dyp = this.ship.y - p.sprite.y;
                     const shipR = 20;
                     if (dxp * dxp + dyp * dyp <= (shipR + p.radius) * (shipR + p.radius)) {
-                        clearInterval(this.urgentInterval);
-                        document.body.classList.remove('urgent');
-                        sfx.crash.currentTime = 0;
-                        sfx.crash.play().catch(() => {});
-                        window.currentGameplayMusic?.pause();
-                        sfx.boost.pause();
-                        sfx.boost.currentTime = 0;
-                        showGameOver('Game Over! You crashed into a planet.');
-                        this.gameOver = true;
-                        return;
+                        if (this.shield) {
+                            this.shield = false;
+                            window.sessionUpgrades = window.sessionUpgrades.filter(u => u !== 'shield');
+                            sessionStorage.setItem('sessionUpgrades', JSON.stringify(window.sessionUpgrades));
+                        } else {
+                            clearInterval(this.urgentInterval);
+                            document.body.classList.remove('urgent');
+                            sfx.crash.currentTime = 0;
+                            sfx.crash.play().catch(() => {});
+                            window.currentGameplayMusic?.pause();
+                            sfx.boost.pause();
+                            sfx.boost.currentTime = 0;
+                            showGameOver('Game Over! You crashed into a planet.');
+                            this.gameOver = true;
+                            return;
+                        }
                     }
                 }
 

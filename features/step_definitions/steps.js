@@ -507,3 +507,49 @@ When('I open the shop tab', async () => {
 Then('the shop should list upgrades', async () => {
   await page.waitForSelector('#shop-panel .shop-item');
 });
+
+Given('I have {int} credits', async count => {
+  await page.evaluate(c => {
+    localStorage.setItem('credits', c);
+    window.totalCredits = c;
+    document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => { el.textContent = c; });
+  }, count);
+});
+
+When('I buy the upgrade {string}', async name => {
+  await page.evaluate(n => {
+    const item = shopItems.find(i => i.name === n);
+    if (item) purchase(item);
+  }, name);
+});
+
+Then('my ammo should be {int}', async expected => {
+  await page.waitForFunction(() => window.gameScene);
+  const val = await page.evaluate(() => window.gameScene.ammo);
+  if (val !== expected) {
+    throw new Error(`Expected ammo ${expected} but got ${val}`);
+  }
+});
+
+Then('the shield should be active', async () => {
+  await page.waitForFunction(() => window.gameScene);
+  const val = await page.evaluate(() => window.gameScene.shield);
+  if (!val) {
+    throw new Error('Shield not active');
+  }
+});
+
+Then('the shield should not be active', async () => {
+  await page.waitForFunction(() => window.gameScene);
+  const val = await page.evaluate(() => window.gameScene.shield);
+  if (val) {
+    throw new Error('Shield should not be active');
+  }
+});
+
+Then('the game should not be over', async () => {
+  const val = await page.evaluate(() => window.gameScene.gameOver);
+  if (val) {
+    throw new Error('Game should not be over');
+  }
+});
