@@ -39,7 +39,7 @@ Then('the promo animation should be shown', async () => {
 });
 
 Then('the game should appear after a short delay', async () => {
-  await page.waitForTimeout(4000);
+  await page.waitForSelector('#game', { state: 'visible' });
   const display = await page.$eval('#game', el => getComputedStyle(el).display);
   if (display === 'none') {
     throw new Error('Game did not appear');
