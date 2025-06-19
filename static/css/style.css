@@ -275,13 +275,27 @@ body.urgent {
 }
 
 .legend-dot {
+    position: relative;
     display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
+    width: 14px;
+    height: 12px;
     margin-right: 4px;
+    background: #8b4513;
+    border-radius: 2px;
 }
 
-.legend-dot.ammo { background: #ffff00; }
-.legend-dot.fuel { background: #ffa500; }
-.legend-dot.time { background: #00ff00; }
+.legend-dot::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    background: var(--lid-color);
+}
+
+.legend-dot.ammo { --lid-color: #ffff00; }
+.legend-dot.fuel  { --lid-color: #ffa500; }
+.legend-dot.time  { --lid-color: #00ff00; }
