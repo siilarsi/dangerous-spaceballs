@@ -3,6 +3,40 @@
 
         const storedHigh = parseInt(localStorage.getItem('highscore') || '0');
         document.getElementById('highscore-value').textContent = storedHigh;
+        window.totalCredits = parseInt(localStorage.getItem('credits') || '0');
+        document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => {
+            el.textContent = window.totalCredits;
+        });
+
+        const shopItems = [
+            { id: 'max_ammo', name: 'Increase Max Ammo', cost: 5, permanent: true },
+            { id: 'shield', name: 'Temporary Shield', cost: 2, stock: 1 }
+        ];
+
+        function renderShop() {
+            const container = document.getElementById('shop-items');
+            container.innerHTML = '';
+            shopItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                const btn = document.createElement('button');
+                btn.textContent = `Buy (${item.cost})`;
+                btn.onclick = () => purchase(item);
+                div.textContent = `${item.name} - ${item.cost} credits `;
+                div.appendChild(btn);
+                container.appendChild(div);
+            });
+        }
+
+        function purchase(item) {
+            if (window.totalCredits >= item.cost) {
+                window.totalCredits -= item.cost;
+                localStorage.setItem('credits', window.totalCredits);
+                document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => {
+                    el.textContent = window.totalCredits;
+                });
+            }
+        }
 
         const gameOverBox = document.getElementById('game-over');
         function showGameOver(msg) {
@@ -150,6 +184,11 @@
                         this.streak += 1;
                         this.score += 10 * this.streak;
                         this.credits += 1;
+                        window.totalCredits += 1;
+                        localStorage.setItem('credits', window.totalCredits);
+                        document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => {
+                            el.textContent = window.totalCredits;
+                        });
                         if (this.streak % 5 === 0) {
                             const txt = this.add.text(x, y, `Streak ${this.streak}!`, { font: '20px Arial', color: '#ff00ff' });
                             txt.setOrigin(0.5);
@@ -522,7 +561,18 @@
             }
         }
 
-        document.getElementById('start-screen').addEventListener('click', function() {
+        document.getElementById('shop-tab').addEventListener('click', () => {
+            renderShop();
+            document.getElementById('shop-panel').style.display = 'block';
+        });
+        document.getElementById('close-shop').addEventListener('click', () => {
+            document.getElementById('shop-panel').style.display = 'none';
+        });
+
+        document.getElementById('start-screen').addEventListener('click', function(e) {
+            if (e.target.id === 'shop-tab' || e.target.closest('#shop-panel')) {
+                return;
+            }
             document.getElementById('start-screen').style.display = 'none';
             const promo = document.getElementById('promo-animation');
             promo.style.display = 'flex';
