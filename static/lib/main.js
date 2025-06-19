@@ -92,7 +92,7 @@
                 // Planet obstacles
                 this.planets = [];
                 this.gravityStrength = 3000;
-                const pr = 60;
+                const pr = 80;
                 const positions = [
                     { x: 80, y: 80 },
                     { x: this.scale.width - 80, y: 80 },
