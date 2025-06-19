@@ -25,13 +25,13 @@ jobs:
           end=$(date +%s)
           echo $((end - start)) > duration.txt
       - name: Generate report
-        if: always()
+        if: success()
         env:
           WORKFLOW_FILE: bdd.yml
         run: |
           node scripts/generate-duration-report.js
       - name: Upload report
-        if: always()
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: bdd-duration-report
