@@ -30,6 +30,21 @@ After(async () => {
   await context?.close();
 });
 
+BeforeAll(async () => {
+  browser = await chromium.launch({
+    args: ['--no-sandbox', '--ignore-certificate-errors', '--allow-file-access-from-files']
+  });
+});
+
+Before(async () => {
+  const ctx = await browser.newContext();
+  page = await ctx.newPage();
+});
+
+After(async () => {
+  await page?.context()?.close();
+});
+
 Given('the level progression interval is {int} ms', async ms => {
   await page.evaluate(m => { window.levelDuration = m; }, ms);
 });
