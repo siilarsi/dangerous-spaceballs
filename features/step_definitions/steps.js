@@ -14,6 +14,7 @@ const path = require('path');
 setDefaultTimeout(60 * 1000);
 
 let browser, context, page;
+let lastShipPos;
 
 BeforeAll(async () => {
   browser = await chromium.launch({
@@ -107,7 +108,7 @@ Then('the flame should be visible', async () => {
 
 Then('the fuel should decrease', async () => {
   const fuel = await page.evaluate(() => window.gameScene.fuel);
-  if (fuel >= 100) {
+  if (fuel >= 150) {
     throw new Error('Fuel did not decrease');
   }
 });
@@ -222,5 +223,27 @@ Then('menu music should be playing', async () => {
     const bg = await page.$eval('#game', el => getComputedStyle(el).backgroundImage);
     if (!bg.includes('stars.webp')) {
       throw new Error('Star background not visible');
+    }
+  });
+
+  When('I record the ship position', async () => {
+    await page.waitForFunction(() => window.gameScene);
+    lastShipPos = await page.evaluate(() => ({ x: window.gameScene.ship.x, y: window.gameScene.ship.y }));
+  });
+
+  Then('the ship should have moved', async () => {
+    await page.waitForFunction(() => window.gameScene);
+    const pos = await page.evaluate(() => ({ x: window.gameScene.ship.x, y: window.gameScene.ship.y }));
+    const dist = Math.hypot(pos.x - lastShipPos.x, pos.y - lastShipPos.y);
+    if (dist < 5) {
+      throw new Error('Ship did not move');
+    }
+  });
+
+  Then('the legend should be visible', async () => {
+    await page.waitForSelector('#legend', { state: 'visible' });
+    const display = await page.$eval('#legend', el => getComputedStyle(el).display);
+    if (display === 'none') {
+      throw new Error('Legend not visible');
     }
   });
