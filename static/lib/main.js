@@ -106,7 +106,7 @@
                     const tex = this.textures.createCanvas(atmoKey, size, size);
                     const ctx = tex.getContext();
                     const grad = ctx.createRadialGradient(size / 2, size / 2, pr, size / 2, size / 2, atmoRadius);
-                    grad.addColorStop(0, 'rgba(102,102,255,0.4)');
+                    grad.addColorStop(0, 'rgba(102,102,255,0.6)');
                     grad.addColorStop(1, 'rgba(102,102,255,0)');
                     ctx.fillStyle = grad;
                     ctx.beginPath();
