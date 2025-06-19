@@ -607,3 +607,16 @@ Then('the inventory stat {string} should be {string}', async (label, expected) =
     throw new Error(`Expected ${label} ${expected} but got ${actual}`);
   }
 });
+
+Then('the inventory stat icon for {string} should be {string}', async (label, expected) => {
+  const actual = await page.evaluate(lbl => {
+    const items = Array.from(document.querySelectorAll('#inventory-panel li'));
+    const el = items.find(i => i.textContent.trim().toLowerCase().startsWith(lbl.toLowerCase()));
+    if (!el) return null;
+    const style = getComputedStyle(el, '::before').content;
+    return style.replace(/^"|"$/g, '');
+  }, label);
+  if (actual !== expected) {
+    throw new Error(`Expected icon ${expected} but got ${actual}`);
+  }
+});

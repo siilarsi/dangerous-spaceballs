@@ -6,3 +6,11 @@ Feature: Inventory panel
     And the inventory stat "Ammo Limit" should be "50"
     And the inventory stat "Boost Thrust" should be "200"
     And the inventory stat "Shield Duration" should be "0"
+
+  Scenario: Stat icons are shown next to values
+    Given I open the game page
+    Then the inventory panel should be visible
+    And the inventory stat icon for "Fuel Capacity" should be "⛽"
+    And the inventory stat icon for "Ammo Limit" should be "🔫"
+    And the inventory stat icon for "Boost Thrust" should be "🚀"
+    And the inventory stat icon for "Shield Duration" should be "🛡️"
