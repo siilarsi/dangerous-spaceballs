@@ -22,9 +22,9 @@
 
   const storedHigh = storage.getHighscore();
   document.getElementById('highscore-value').textContent = storedHigh;
-  window.totalCredits = storage.getCredits();
+  window.runCredits = 0;
   document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => {
-    el.textContent = window.totalCredits;
+    el.textContent = window.runCredits;
   });
 
   window.permanentUpgrades = storage.getPermanentUpgrades();
@@ -40,7 +40,7 @@
 
   function resetProgress(){
     storage.resetAll();
-    window.totalCredits = 0;
+    window.runCredits = 0;
     window.permanentUpgrades = [];
     window.sessionUpgrades = [];
     document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => { el.textContent = 0; });
