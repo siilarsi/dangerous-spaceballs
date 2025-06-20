@@ -12,7 +12,6 @@ Feature: Start the game
     Then the promo animation should be shown
     And the game should appear after a short delay
     And the level should be 1
-  And the time remaining should be 60
 
   Scenario: Star background visible in gameplay
     Given I open the game page

@@ -5,25 +5,6 @@ Given('the level progression interval is {int} ms', async ms => {
   await ctx.page.evaluate(m => { window.levelDuration = m; }, ms);
 });
 
-When('I force the timer below ten seconds', async () => {
-  await ctx.page.evaluate(() => {
-    if (window.gameScene) {
-      window.gameScene.timeRemaining = 9;
-    } else {
-      const ov = document.getElementById('urgency-overlay');
-      if (ov) ov.style.opacity = '0.07';
-    }
-  });
-  await ctx.page.waitForTimeout(1000);
-});
-
-Then('the screen should tint red', async () => {
-  await ctx.page.waitForFunction(() => {
-    const ov = document.getElementById('urgency-overlay');
-    if (!ov) return false;
-    return parseFloat(getComputedStyle(ov).opacity) > 0;
-  });
-});
 
 When('I wait for {int} ms', async ms => {
   await ctx.page.waitForTimeout(ms);
@@ -67,12 +48,6 @@ Then('the game should not be paused', async () => {
   }
 });
 
-Then('the time remaining should be {int}', async expected => {
-  const val = await ctx.page.evaluate(() => Math.ceil(window.gameScene.timeRemaining));
-  if (val !== expected) {
-    throw new Error(`Expected time remaining ${expected} but got ${val}`);
-  }
-});
 
 When('I record the ship position', async () => {
   await ctx.page.waitForFunction(() => window.gameScene);

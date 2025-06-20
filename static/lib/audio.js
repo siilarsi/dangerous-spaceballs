@@ -16,8 +16,6 @@
     good: new Audio('static/sounds/hit_good.ogg'),
     bad: new Audio('static/sounds/hit_bad.ogg'),
     pickup: new Audio('static/sounds/pickup.ogg'),
-    tick: new Audio('static/sounds/tick.ogg'),
-    timeout: new Audio('static/sounds/timeout.ogg'),
     crash: new Audio('static/sounds/crash.ogg'),
     explosion: new Audio('static/sounds/explosion.ogg'),
     destroyPickup: new Audio('static/sounds/destroy_pickup.ogg')
@@ -25,14 +23,8 @@
   Object.values(sfx).forEach(a => { a.volume = 0.8; });
   sfx.boost.loop = true;
 
-  function playTick() {
-    sfx.tick.currentTime = 0;
-    sfx.tick.play().catch(() => {});
-  }
-
   window.audioElements = { menuMusic, playTracks, sfx };
   window.sfx = sfx;
-  window.playTick = playTick;
 
   menuMusic.play().catch(() => {});
 })();
