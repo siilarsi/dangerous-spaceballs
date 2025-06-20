@@ -217,6 +217,7 @@
     this.dockRing.visible = false;
     this.dockBanner = document.getElementById('dock-banner');
     this.undockBtn = document.getElementById('undock-btn');
+    this.shopOverlay = document.getElementById('shop-overlay');
     this.isDocked = false;
 
     this.abortDocking = () => {
@@ -235,6 +236,10 @@
         this.abortDocking();
         this.isDocked = true;
         this.dockBanner.style.display = 'block';
+        if(this.shopOverlay){
+            this.shopOverlay.classList.add('open');
+            updateShopStatsPanel();
+        }
         window.pauseGame();
     };
 
@@ -242,6 +247,9 @@
         if (!this.isDocked) return;
         this.isDocked = false;
         this.dockBanner.style.display = 'none';
+        if(this.shopOverlay){
+            this.shopOverlay.classList.remove('open');
+        }
         window.resumeGame();
     };
 
