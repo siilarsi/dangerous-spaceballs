@@ -21,6 +21,8 @@ Feature: Inventory panel
     When I open the shop tab
     And I buy the upgrade "Increase Max Ammo"
     And I buy the upgrade "Extra Starting Fuel"
+    And I buy the upgrade "Temporary Shield"
     When I reload the page
     Then the inventory stat "Fuel Capacity" should be "250"
     And the inventory stat "Ammo Limit" should be "100"
+    And the inventory stat "Shield Duration" should be "1"
