@@ -2,6 +2,24 @@
   const { menuMusic, playTracks, sfx } = window.audioElements;
   window.gamePaused = false;
 
+  function pauseGame(){
+    window.currentGameplayMusic?.pause();
+    sfx.boost.pause();
+    sfx.boost.currentTime = 0;
+    if(window.gameScene){
+      window.gameScene.scene.pause();
+      window.gamePaused = true;
+    }
+  }
+
+  function resumeGame(){
+    if(window.gameScene){
+      window.gameScene.scene.resume();
+      window.gamePaused = false;
+    }
+    window.currentGameplayMusic?.play().catch(()=>{});
+  }
+
   const storedHigh = storage.getHighscore();
   document.getElementById('highscore-value').textContent = storedHigh;
   window.totalCredits = storage.getCredits();
@@ -82,22 +100,11 @@
   function handleVisibility(){
     if(document.hidden){
       menuMusic.pause();
-      window.currentGameplayMusic?.pause();
-      sfx.boost.pause();
-      sfx.boost.currentTime = 0;
-      if(window.gameScene){
-        window.gameScene.scene.pause();
-        window.gamePaused = true;
-      }
+      pauseGame();
     }else{
-      if(window.gameScene){
-        window.gameScene.scene.resume();
-        window.gamePaused = false;
-      }
+      resumeGame();
       if(document.getElementById('start-screen').style.display !== 'none'){
         menuMusic.play().catch(()=>{});
-      }else if(window.currentGameplayMusic){
-        window.currentGameplayMusic.play().catch(()=>{});
       }
     }
   }
@@ -107,4 +114,6 @@
   window.resetProgress = resetProgress;
   window.startGame = startGame;
   window.showGameOver = showGameOver;
+  window.pauseGame = pauseGame;
+  window.resumeGame = resumeGame;
 })();

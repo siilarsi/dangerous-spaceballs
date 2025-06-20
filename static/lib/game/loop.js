@@ -317,10 +317,34 @@
         this.spawnTraderShip(x, y, dir);
     }
     if (this.traderShip) {
+        if (this.dockingStart || this.isDocked) {
+            this.traderShip.speed = 0;
+        } else {
+            this.traderShip.speed = this.traderShip.baseSpeed;
+        }
         this.traderShip.x += this.traderShip.speed * deltaSeconds * this.traderShip.dir;
         const dx = this.ship.x - this.traderShip.x;
         const dy = this.ship.y - this.traderShip.y;
-        if (dx * dx + dy * dy < 50 * 50) {
+        const distSq = dx * dx + dy * dy;
+        const dockRange = 40 * 40;
+        if (!this.isDocked && distSq <= dockRange) {
+            if (!this.dockingStart) {
+                this.startDocking(time);
+            } else {
+                const prog = (time - this.dockingStart) / 2000;
+                this.dockRing.clear();
+                this.dockRing.lineStyle(2, 0x00ff00);
+                this.dockRing.beginPath();
+                this.dockRing.arc(this.ship.x, this.ship.y, 30, -Math.PI / 2, -Math.PI / 2 + prog * Math.PI * 2, false);
+                this.dockRing.strokePath();
+                if (prog >= 1) {
+                    this.completeDocking();
+                }
+            }
+        } else if (this.dockingStart) {
+            this.abortDocking();
+        }
+        if (!this.isDocked && !this.dockingStart && distSq < 50 * 50) {
             const angle = Math.atan2(dy, dx);
             const force = 300;
             this.velocity.x += Math.cos(angle) * force;

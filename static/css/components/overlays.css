@@ -39,6 +39,26 @@
     transition: opacity 1s;
 }
 
+#dock-banner {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #fff;
+    padding: 20px;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    display: none;
+    z-index: 10;
+}
+
+#dock-banner button {
+    margin-top: 10px;
+    padding: 4px 12px;
+}
+
 #game-over {
     position: absolute;
     top: 0;

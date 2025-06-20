@@ -60,6 +60,13 @@ Then('the game should be paused', async () => {
   }
 });
 
+Then('the game should not be paused', async () => {
+  const paused = await ctx.page.evaluate(() => window.gamePaused);
+  if (paused) {
+    throw new Error('Game unexpectedly paused');
+  }
+});
+
 Then('the time remaining should be {int}', async expected => {
   const val = await ctx.page.evaluate(() => Math.ceil(window.gameScene.timeRemaining));
   if (val !== expected) {
@@ -78,6 +85,15 @@ Then('the ship should have moved', async () => {
   const dist = Math.hypot(pos.x - ctx.lastShipPos.x, pos.y - ctx.lastShipPos.y);
   if (dist < 5) {
     throw new Error('Ship did not move');
+  }
+});
+
+Then('the ship should not have moved', async () => {
+  await ctx.page.waitForFunction(() => window.gameScene);
+  const pos = await ctx.page.evaluate(() => ({ x: window.gameScene.ship.x, y: window.gameScene.ship.y }));
+  const dist = Math.hypot(pos.x - ctx.lastShipPos.x, pos.y - ctx.lastShipPos.y);
+  if (dist > 2) {
+    throw new Error('Ship moved unexpectedly');
   }
 });
 

@@ -205,10 +205,47 @@
         container.add([body, cockpit, flame]);
         this.tweens.add({ targets: flame, scaleX: 1.5, yoyo: true, repeat: -1, duration: 300 });
         container.dir = dir;
-        container.speed = 40;
+        container.baseSpeed = 40;
+        container.speed = container.baseSpeed;
         this.traderShip = container;
     };
     window.spawnTraderShip = (x, y, dir) => this.spawnTraderShip(x, y, dir);
+
+    // Docking helpers
+    this.dockingStart = null;
+    this.dockRing = this.add.graphics();
+    this.dockRing.visible = false;
+    this.dockBanner = document.getElementById('dock-banner');
+    this.undockBtn = document.getElementById('undock-btn');
+    this.isDocked = false;
+
+    this.abortDocking = () => {
+        this.dockRing.clear();
+        this.dockRing.visible = false;
+        this.dockingStart = null;
+    };
+
+    this.startDocking = t => {
+        this.dockingStart = t;
+        this.dockRing.visible = true;
+        this.dockRing.clear();
+    };
+
+    this.completeDocking = () => {
+        this.abortDocking();
+        this.isDocked = true;
+        this.dockBanner.style.display = 'block';
+        window.pauseGame();
+    };
+
+    this.undock = () => {
+        if (!this.isDocked) return;
+        this.isDocked = false;
+        this.dockBanner.style.display = 'none';
+        window.resumeGame();
+    };
+
+    this.undockBtn.addEventListener('click', this.undock);
 
 }
   window.gameCreate = create;
