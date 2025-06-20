@@ -6,6 +6,9 @@
     { id: 'shield', name: 'Temporary Shield', desc: 'Absorb the next hit you take.', icon: '🛡️', cost: 2, stock: 1 }
   ];
 
+  // Expose items for tests and other modules
+  window.shopItems = items;
+
   function renderShop(){
     const container = document.getElementById('shop-items');
     container.innerHTML = '';
@@ -71,4 +74,6 @@
   }
 
   window.shop = { items, renderShop, purchase };
+  // Provide globals for tests
+  window.purchase = purchase;
 })();
