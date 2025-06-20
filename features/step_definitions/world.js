@@ -1,0 +1,191 @@
+const { When, Then } = require('@cucumber/cucumber');
+const ctx = require('./context');
+
+Then('the star background should cover the game area', async () => {
+  const bg = await ctx.page.$eval('#game', el => getComputedStyle(el).backgroundImage);
+  if (!bg.includes('stars.webp')) {
+    throw new Error('Star background not visible');
+  }
+});
+
+Then('the legend should be visible', async () => {
+  await ctx.page.waitForSelector('#legend', { state: 'visible' });
+  const display = await ctx.page.$eval('#legend', el => getComputedStyle(el).display);
+  if (display === 'none') {
+    throw new Error('Legend not visible');
+  }
+});
+
+Then('the legend icons should match power-up graphics', async () => {
+  const icons = await ctx.page.$$eval('#legend .legend-dot', els =>
+    els.map(el => ({
+      base: getComputedStyle(el).backgroundColor,
+      lid: getComputedStyle(el, '::after').backgroundColor
+    }))
+  );
+  const expected = [
+    'rgb(255, 255, 0)',
+    'rgb(255, 165, 0)',
+    'rgb(0, 255, 0)'
+  ];
+  const baseColor = 'rgb(139, 69, 19)';
+  if (
+    icons.length !== 3 ||
+    icons.some((ic, i) => ic.base !== baseColor || ic.lid !== expected[i])
+  ) {
+    throw new Error('Legend icons do not match power-up graphics');
+  }
+});
+
+Then('the legend should not be visible', async () => {
+  const display = await ctx.page.$eval('#legend', el => getComputedStyle(el).display);
+  if (display !== 'none') {
+    throw new Error('Legend should be hidden');
+  }
+});
+
+When('I spawn an ammo power-up on the ship', async () => {
+  await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.powerUps);
+  ctx.initialAmmo = await ctx.page.evaluate(() => window.gameScene.ammo);
+  await ctx.page.evaluate(() => {
+    const gs = window.gameScene;
+    const time = gs.time.now;
+    const chest = gs.add.container(gs.ship.x, gs.ship.y);
+    const base = gs.add.rectangle(0, 4, 24, 13, 0x8b4513);
+    const lid = gs.add.rectangle(0, -5, 24, 7, 0xffff00);
+    chest.add([base, lid]);
+    gs.powerUps.push({ sprite: chest, type: 'ammo', spawnTime: time });
+    gs.nextPowerUpSpawn = Infinity;
+  });
+  await ctx.page.waitForTimeout(200);
+});
+
+When('I spawn an ammo power-up offset by {int} {int} from the ship', async (dx, dy) => {
+  await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.powerUps);
+  await ctx.page.evaluate(({ dx, dy }) => {
+    const gs = window.gameScene;
+    const time = gs.time.now;
+    const chest = gs.add.container(gs.ship.x + dx, gs.ship.y + dy);
+    const base = gs.add.rectangle(0, 4, 24, 13, 0x8b4513);
+    const lid = gs.add.rectangle(0, -5, 24, 7, 0xffff00);
+    chest.add([base, lid]);
+    gs.powerUps.push({ sprite: chest, type: 'ammo', spawnTime: time });
+    gs.nextPowerUpSpawn = Infinity;
+  }, { dx, dy });
+  await ctx.page.waitForTimeout(200);
+});
+
+Then('the ammo should increase by 15', async () => {
+  const ammo = await ctx.page.evaluate(() => window.gameScene.ammo);
+  if (ammo !== ctx.initialAmmo + 15) {
+    throw new Error('Ammo did not increase by 15');
+  }
+});
+
+Then('a power-up should be visible', async () => {
+  const count = await ctx.page.evaluate(() => window.gameScene.powerUps.length);
+  if (count === 0) {
+    throw new Error('Power-up not visible');
+  }
+});
+
+Then('no power-ups should be visible', async () => {
+  const count = await ctx.page.evaluate(() => window.gameScene.powerUps.length);
+  if (count !== 0) {
+    throw new Error('Power-up still visible');
+  }
+});
+
+When('I spawn a planet on the ship', async () => {
+  await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.planets);
+  await ctx.page.evaluate(() => {
+    const gs = window.gameScene;
+    const pr = 100;
+    const atmoKey = `bdd-atmo-${gs.planets.length}`;
+    const atmoRadius = pr * 1.5;
+    const size = atmoRadius * 2;
+    const tex = gs.textures.createCanvas(atmoKey, size, size);
+    const ctx2 = tex.getContext();
+    const grad = ctx2.createRadialGradient(size / 2, size / 2, pr, size / 2, size / 2, atmoRadius);
+    grad.addColorStop(0, 'rgba(102,102,255,0.6)');
+    grad.addColorStop(1, 'rgba(102,102,255,0)');
+    ctx2.fillStyle = grad;
+    ctx2.beginPath();
+    ctx2.arc(size / 2, size / 2, atmoRadius, 0, Math.PI * 2);
+    ctx2.fill();
+    tex.refresh();
+    const atmo = gs.add.image(gs.ship.x, gs.ship.y, atmoKey);
+    atmo.setDepth(-1);
+    const p = gs.add.circle(gs.ship.x, gs.ship.y, pr, 0x6666ff);
+    gs.planets.push({ sprite: p, radius: pr, atmosphere: atmo });
+  });
+});
+
+When('I spawn a planet offset by {int} {int} from the ship', async (dx, dy) => {
+  await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.planets);
+  await ctx.page.evaluate(({ dx, dy }) => {
+    const gs = window.gameScene;
+    const pr = 100;
+    const atmoKey = `bdd-atmo-${gs.planets.length}`;
+    const atmoRadius = pr * 1.5;
+    const size = atmoRadius * 2;
+    const tex = gs.textures.createCanvas(atmoKey, size, size);
+    const ctx2 = tex.getContext();
+    const grad = ctx2.createRadialGradient(size / 2, size / 2, pr, size / 2, size / 2, atmoRadius);
+    grad.addColorStop(0, 'rgba(102,102,255,0.6)');
+    grad.addColorStop(1, 'rgba(102,102,255,0)');
+    ctx2.fillStyle = grad;
+    ctx2.beginPath();
+    ctx2.arc(size / 2, size / 2, atmoRadius, 0, Math.PI * 2);
+    ctx2.fill();
+    tex.refresh();
+    const atmo = gs.add.image(gs.ship.x + dx, gs.ship.y + dy, atmoKey);
+    atmo.setDepth(-1);
+    const p = gs.add.circle(gs.ship.x + dx, gs.ship.y + dy, pr, 0x6666ff);
+    gs.planets.push({ sprite: p, radius: pr, atmosphere: atmo });
+  }, { dx, dy });
+});
+
+Then('the planet radius should be {int}', async expected => {
+  const radius = await ctx.page.evaluate(() => {
+    const gs = window.gameScene;
+    const p = gs?.planets?.[gs.planets.length - 1];
+    return p?.radius;
+  });
+  if (radius !== expected) {
+    throw new Error(`Expected planet radius ${expected} but got ${radius}`);
+  }
+});
+
+Then('planet atmospheres should be visible', async () => {
+  const visible = await ctx.page.evaluate(() => {
+    const gs = window.gameScene;
+    if (!gs || !gs.planets) return false;
+    return gs.planets.every(p => {
+      return p.atmosphere && p.atmosphere.alpha > 0 && p.atmosphere.visible;
+    });
+  });
+  if (!visible) {
+    throw new Error('Atmospheres not visible');
+  }
+});
+
+When('I clear existing orbs', async () => {
+  await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.orbs);
+  await ctx.page.evaluate(() => {
+    const gs = window.gameScene;
+    gs.orbs.forEach(o => o.sprite.destroy());
+    gs.orbs = [];
+  });
+});
+
+When('I spawn a stationary red orb offset by {int} {int} from the ship', async (dx, dy) => {
+  await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.orbs);
+  await ctx.page.evaluate(({ dx, dy }) => {
+    const gs = window.gameScene;
+    const orb = gs.add.circle(gs.ship.x + dx, gs.ship.y + dy, 20, 0xff0000);
+    orb.setScale(1);
+    gs.orbs.push({ sprite: orb, radius: 20, vx: 0, vy: 0, spawnTime: gs.time.now, growing: false });
+  }, { dx, dy });
+  await new Promise(r => setTimeout(r, 100));
+});
