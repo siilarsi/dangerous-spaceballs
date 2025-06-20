@@ -22,6 +22,7 @@
 
     const deltaSeconds = delta / 1000;
     const noseAngle = this.ship.rotation - Math.PI / 2;
+    const powerScale = Math.max(0.5, 1 - (this.level - 1) * 0.05);
 
     // Countdown timer
     this.timeRemaining -= deltaSeconds;
@@ -178,6 +179,7 @@
         this.level += 1;
         this.nextLevelTime += this.levelDuration;
         this.orbSpeedMultiplier *= 1.2;
+        this.powerUpSpawnRate *= 1.05;
         for (const o of this.orbs) {
             o.vx *= 1.2;
             o.vy *= 1.2;
@@ -273,16 +275,19 @@
         if (dxP * dxP + dyP * dyP <= 28 * 28) {
             let label;
             if (p.type === 'ammo') {
-                this.ammo += 15;
-                label = '+15 Ammo';
+                const amt = Math.round(15 * powerScale);
+                this.ammo += amt;
+                label = `+${amt} Ammo`;
             }
             if (p.type === 'fuel') {
-                this.fuel = Math.min(this.maxFuel, this.fuel + 25);
-                label = '+25 Fuel';
+                const amt = Math.round(25 * powerScale);
+                this.fuel = Math.min(this.maxFuel, this.fuel + amt);
+                label = `+${amt} Fuel`;
             }
             if (p.type === 'time') {
-                this.timeRemaining += 15;
-                label = '+15 Time';
+                const amt = Math.round(15 * powerScale);
+                this.timeRemaining += amt;
+                label = `+${amt} Time`;
             }
             const txt = this.add.text(p.sprite.x, p.sprite.y, label, { font: '16px Arial', color: '#ffffff' });
             txt.setOrigin(0.5);

@@ -48,6 +48,11 @@ Then('the level should be {int}', async expected => {
   }
 });
 
+When('I set the game level to {int}', async lvl => {
+  await ctx.page.waitForFunction(() => window.gameScene);
+  await ctx.page.evaluate(l => { window.gameScene.level = l; }, lvl);
+});
+
 Then('the game should be paused', async () => {
   const paused = await ctx.page.evaluate(() => window.gamePaused);
   if (!paused) {

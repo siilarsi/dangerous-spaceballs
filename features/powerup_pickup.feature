@@ -7,6 +7,15 @@ Feature: Power-up pickups
     Then the ammo should increase by 15
     And the floating text "+15 Ammo" should appear
 
+  Scenario: Ammo power-ups give less ammo at high levels
+    Given I open the game page
+    When I click the start screen
+    Then the game should appear after a short delay
+    When I set the game level to 10
+    When I spawn an ammo power-up on the ship
+    Then the ammo should increase by 8
+    And the floating text "+8 Ammo" should appear
+
   Scenario: Power-ups linger before fading
     Given I open the game page
     When I click the start screen

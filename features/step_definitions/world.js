@@ -76,10 +76,10 @@ When('I spawn an ammo power-up offset by {int} {int} from the ship', async (dx, 
   await ctx.page.waitForTimeout(200);
 });
 
-Then('the ammo should increase by 15', async () => {
+Then('the ammo should increase by {int}', async expected => {
   const ammo = await ctx.page.evaluate(() => window.gameScene.ammo);
-  if (ammo !== ctx.initialAmmo + 15) {
-    throw new Error('Ammo did not increase by 15');
+  if (ammo !== ctx.initialAmmo + expected) {
+    throw new Error(`Ammo did not increase by ${expected}`);
   }
 });
 
