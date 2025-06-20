@@ -63,14 +63,19 @@ When('I force the timer below ten seconds', async () => {
     if (window.gameScene) {
       window.gameScene.timeRemaining = 9;
     } else {
-      document.body.classList.add('urgent');
+      const ov = document.getElementById('urgency-overlay');
+      if (ov) ov.style.opacity = '0.07';
     }
   });
   await page.waitForTimeout(1000);
 });
 
-Then('the screen should pulse red', async () => {
-  await page.waitForSelector('body.urgent');
+Then('the screen should tint red', async () => {
+  await page.waitForFunction(() => {
+    const ov = document.getElementById('urgency-overlay');
+    if (!ov) return false;
+    return parseFloat(getComputedStyle(ov).opacity) > 0;
+  });
 });
 
 When('I hold the right mouse button for {int} ms', async ms => {
