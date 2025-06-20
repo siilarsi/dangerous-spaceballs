@@ -6,7 +6,12 @@
     { id: 'shield', name: 'Shield', cost: 5, desc: 'Start with a shield' }
   ];
 
+  let currentInventory = null;
+
   function purchase(item){
+    if(item && currentInventory && currentInventory[item.id] !== undefined){
+      if(currentInventory[item.id] <= 0) return false;
+    }
     if(window.totalCredits < item.cost) return false;
     window.totalCredits -= item.cost;
     storage.setCredits(window.totalCredits);
@@ -15,16 +20,22 @@
     });
     window.permanentUpgrades.push(item.id);
     storage.setPermanentUpgrades(window.permanentUpgrades);
+    if(currentInventory && currentInventory[item.id] !== undefined){
+      currentInventory[item.id] -= 1;
+    }
     updateInventoryPanel();
     updateShopStatsPanel();
+    buildList();
     return true;
   }
 
-  function buildList(){
+  function buildList(inventory){
+    if(inventory !== undefined) currentInventory = inventory;
     const container = document.getElementById('shop-items');
     if(!container) return;
     container.innerHTML = '';
-    for(const item of items){
+    const list = currentInventory ? items.filter(it => currentInventory[it.id] !== undefined) : items;
+    for(const item of list){
       const li = document.createElement('li');
       li.className = 'shop-item';
       const icon = document.createElement('span');
@@ -42,6 +53,12 @@
       btn.className = 'buy-btn';
       btn.textContent = 'Buy';
       btn.addEventListener('click', () => purchase(item));
+      const stock = currentInventory ? currentInventory[item.id] : Infinity;
+      if(stock <= 0){
+        li.classList.add('sold-out');
+        btn.disabled = true;
+        btn.textContent = 'Sold Out';
+      }
       li.appendChild(icon);
       li.appendChild(name);
       li.appendChild(desc);

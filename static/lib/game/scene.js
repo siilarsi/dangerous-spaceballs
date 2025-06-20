@@ -199,10 +199,22 @@
     this.traderShip = null;
     this.traderSpawnInterval = window.traderInterval || 20000;
     this.nextTraderSpawn = this.traderSpawnInterval;
-    this.spawnTraderShip = (x, y, dir = 1) => {
+    function randomInventory(){
+        const ids = window.shop.items.map(i => i.id);
+        Phaser.Utils.Array.Shuffle(ids);
+        const count = Phaser.Math.Between(2, ids.length);
+        const inv = {};
+        for(let i=0;i<count;i++){
+            inv[ids[i]] = Phaser.Math.Between(1,3);
+        }
+        return inv;
+    }
+
+    this.spawnTraderShip = (x, y, dir = 1, inv = null) => {
         if (this.traderShip) this.traderShip.destroy();
         const container = this.add.container(x, y);
-        const body = this.add.rectangle(0, 0, 80, 30, 0x808080);
+        const color = Phaser.Display.Color.RandomRGB().color;
+        const body = this.add.rectangle(0, 0, 80, 30, color);
         const cockpit = this.add.triangle(40 * dir, 0, 20 * dir, -15, 60 * dir, 0, 20 * dir, 15, 0xcccccc);
         const flame = this.add.triangle(-50 * dir, 0, -10 * dir, -5, -20 * dir, 0, -10 * dir, 5, 0xffa500);
         container.add([body, cockpit, flame]);
@@ -210,9 +222,10 @@
         container.dir = dir;
         container.baseSpeed = 40;
         container.speed = container.baseSpeed;
+        container.inventory = inv || randomInventory();
         this.traderShip = container;
     };
-    window.spawnTraderShip = (x, y, dir) => this.spawnTraderShip(x, y, dir);
+    window.spawnTraderShip = (x, y, dir, inv) => this.spawnTraderShip(x, y, dir, inv);
 
     // Docking helpers
     this.dockingStart = null;
@@ -242,6 +255,7 @@
         if(this.shopOverlay){
             this.shopOverlay.classList.add('open');
             updateShopStatsPanel();
+            window.shop.render(this.traderShip.inventory);
         }
         window.pauseGame();
     };
@@ -253,6 +267,10 @@
         if(this.shopOverlay){
             this.shopOverlay.classList.remove('open');
         }
+        if(this.traderShip){
+            this.traderShip.inventory = null;
+        }
+        window.shop.render(null);
         window.resumeGame();
     };
 
