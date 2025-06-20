@@ -271,10 +271,20 @@
         const dxP = this.ship.x - p.sprite.x;
         const dyP = this.ship.y - p.sprite.y;
         if (dxP * dxP + dyP * dyP <= 28 * 28) {
-            if (p.type === 'ammo') this.ammo += 15;
-            if (p.type === 'fuel') this.fuel = Math.min(this.maxFuel, this.fuel + 25);
-            if (p.type === 'time') this.timeRemaining += 15;
-            const txt = this.add.text(p.sprite.x, p.sprite.y, '+15', { font: '16px Arial', color: '#ffffff' });
+            let label;
+            if (p.type === 'ammo') {
+                this.ammo += 15;
+                label = '+15 Ammo';
+            }
+            if (p.type === 'fuel') {
+                this.fuel = Math.min(this.maxFuel, this.fuel + 25);
+                label = '+25 Fuel';
+            }
+            if (p.type === 'time') {
+                this.timeRemaining += 15;
+                label = '+15 Time';
+            }
+            const txt = this.add.text(p.sprite.x, p.sprite.y, label, { font: '16px Arial', color: '#ffffff' });
             txt.setOrigin(0.5);
             this.floatingTexts.push({ sprite: txt, spawnTime: time });
             sfx.pickup.currentTime = 0;
