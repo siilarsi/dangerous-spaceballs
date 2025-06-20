@@ -1,8 +1,8 @@
 (function(){
   const items = [
-    { id: 'extra_fuel', name: 'Extra Fuel', cost: 5, desc: '+50 Fuel Capacity' },
-    { id: 'max_ammo', name: 'Max Ammo', cost: 5, desc: '+50 Ammo Limit' },
-    { id: 'fast_reload', name: 'Fast Reload', cost: 5, desc: 'Reload 10 faster' },
+    { id: 'extra_fuel', name: 'Extra Fuel', cost: 5, desc: '+5 Fuel Capacity' },
+    { id: 'max_ammo', name: 'Max Ammo', cost: 5, desc: '+5 Ammo Limit' },
+    { id: 'fast_reload', name: 'Fast Reload', cost: 5, desc: 'Reload 2% faster' },
     { id: 'shield', name: 'Shield', cost: 5, desc: 'Start with a shield' }
   ];
 

@@ -15,9 +15,9 @@
     let shield = baseStats.shieldDuration;
     const active = [...(window.permanentUpgrades || []), ...(window.sessionUpgrades || [])];
     for (const id of active) {
-      if (id === 'extra_fuel') fuel += 50;
-      else if (id === 'max_ammo') ammo += 50;
-      else if (id === 'fast_reload') reload = Math.max(20, reload - 10);
+      if (id === 'extra_fuel') fuel += 5;
+      else if (id === 'max_ammo') ammo += 5;
+      else if (id === 'fast_reload') reload = Math.max(20, Math.round(reload * 0.98));
       else if (id === 'shield') shield = 1;
     }
     return {fuel, ammo, thrust, reload, shield};
@@ -66,10 +66,13 @@
     let statKey;
     if(item.id === 'extra_fuel'){
       statKey = 'fuel';
-      preview.fuel += 50;
+      preview.fuel += 5;
     }else if(item.id === 'max_ammo'){
       statKey = 'ammo';
-      preview.ammo += 50;
+      preview.ammo += 5;
+    }else if(item.id === 'fast_reload'){
+      statKey = 'reload';
+      preview.reload = Math.max(20, Math.round(preview.reload * 0.98));
     }else if(item.id === 'shield'){
       statKey = 'shield';
       preview.shield = 1;
