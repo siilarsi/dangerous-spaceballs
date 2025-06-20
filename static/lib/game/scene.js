@@ -11,7 +11,11 @@
     this.ship = this.add.polygon(400, 300, shipPoints, 0x00ffff);
     this.ship.setStrokeStyle(2, 0xffffff);
     this.ship.setOrigin(0.5, 0.5);
-    this.shipRadius = 16;
+    const R = 12;
+    const offsetX = this.ship.width / 2 - R;
+    const offsetY = this.ship.height / 3 - R;
+    this.shipRadius = R;
+    this.shipBodyOffset = new Phaser.Math.Vector2(offsetX, offsetY);
 
     this.velocity = new Phaser.Math.Vector2(0, 0);
     this.isBoosting = false;

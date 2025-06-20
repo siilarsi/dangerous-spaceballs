@@ -130,3 +130,11 @@ Then('the debug overlay should be active', async () => {
     throw new Error('Debug overlay not active');
   }
 });
+
+Then('the ship hitbox radius should be {int}', async r => {
+  await ctx.page.waitForFunction(() => window.gameScene);
+  const val = await ctx.page.evaluate(() => window.gameScene.shipRadius);
+  if (val !== r) {
+    throw new Error(`Expected ship radius ${r} but got ${val}`);
+  }
+});
