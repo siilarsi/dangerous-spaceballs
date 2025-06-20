@@ -43,4 +43,13 @@ Feature: Trader ship sightings
     And I spawn the trader ship at offset 45 0 from the ship
     And I wait for 2500 ms
     Then the docking banner should be visible
-    And the game should be paused
+  And the game should be paused
+
+  Scenario: Trader ship geometry is aligned
+    Given I open the game page
+    And the trader spawn interval is 100 ms
+    When I click the start screen
+    Then the game should appear after a short delay
+    When I spawn the trader ship on the ship
+    Then the trader ship cockpit should be centered
+    And the trader ship wings should be symmetrical

@@ -1,11 +1,12 @@
 (function(){
   function create() {
     window.gameScene = this;
-    // Create a slightly sleeker ship using a polygon with an outline
-    const shipPoints = [0, -25, 20, 20, 0, 10, -20, 20];
+    // Create a slightly smaller ship using a polygon with an outline
+    const shipPoints = [0, -20, 16, 16, 0, 8, -16, 16];
     this.ship = this.add.polygon(400, 300, shipPoints, 0x00ffff);
     this.ship.setStrokeStyle(2, 0xffffff);
     this.ship.setOrigin(0.5, 0.5);
+    this.shipRadius = 16;
 
     this.velocity = new Phaser.Math.Vector2(0, 0);
     this.isBoosting = false;
@@ -98,7 +99,7 @@
     this.spawnOrb = (color, t) => {
         const x = Phaser.Math.Between(0, this.scale.width);
         const y = Phaser.Math.Between(0, this.scale.height);
-        const radius = 20;
+        const radius = 16;
         const orb = this.add.circle(x, y, radius, color);
         orb.setStrokeStyle(2, 0xffffff);
         this.tweens.add({ targets: orb, scale: 1.2, yoyo: true, repeat: -1, duration: 800, delay: this.orbGrowthDuration });
@@ -223,9 +224,9 @@
         const color = Phaser.Display.Color.RandomRGB().color;
         const body = this.add.rectangle(0, 0, 80, 30, color);
         body.setStrokeStyle(2, 0xffffff);
-        const cockpit = this.add.triangle(40 * dir, 0, 20 * dir, -15, 60 * dir, 0, 20 * dir, 15, 0xcccccc);
-        const wing1 = this.add.triangle(-10 * dir, -15, -30 * dir, -25, 10 * dir, -15, -10 * dir, -5, color);
-        const wing2 = this.add.triangle(-10 * dir, 15, -30 * dir, 25, 10 * dir, 15, -10 * dir, 5, color);
+        const cockpit = this.add.triangle(40 * dir, 0, 0, -15, 30 * dir, 0, 0, 15, 0xcccccc);
+        const wing1 = this.add.triangle(0, 0, -20 * dir, -15, -40 * dir, -5, -40 * dir, -25, color);
+        const wing2 = this.add.triangle(0, 0, -20 * dir, 15, -40 * dir, 25, -40 * dir, 5, color);
         const flame = this.add.triangle(-50 * dir, 0, -10 * dir, -5, -20 * dir, 0, -10 * dir, 5, 0xffa500);
         container.add([body, cockpit, wing1, wing2, flame]);
         this.tweens.add({ targets: flame, scaleX: 1.5, yoyo: true, repeat: -1, duration: 300 });

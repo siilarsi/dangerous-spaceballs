@@ -191,9 +191,9 @@ When('I spawn a stationary red orb offset by {int} {int} from the ship', async (
   await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.orbs);
   await ctx.page.evaluate(({ dx, dy }) => {
     const gs = window.gameScene;
-    const orb = gs.add.circle(gs.ship.x + dx, gs.ship.y + dy, 20, 0xff0000);
+    const orb = gs.add.circle(gs.ship.x + dx, gs.ship.y + dy, 16, 0xff0000);
     orb.setScale(1);
-    gs.orbs.push({ sprite: orb, radius: 20, vx: 0, vy: 0, spawnTime: gs.time.now, growing: false });
+    gs.orbs.push({ sprite: orb, radius: 16, vx: 0, vy: 0, spawnTime: gs.time.now, growing: false });
   }, { dx, dy });
   await new Promise(r => setTimeout(r, 300));
 });
@@ -315,6 +315,35 @@ Then('the docking banner should not be visible', async () => {
   const display = await ctx.page.$eval('#dock-banner', el => getComputedStyle(el).display);
   if (display !== 'none') {
     throw new Error('Dock banner should be hidden');
+  }
+});
+
+Then('the trader ship cockpit should be centered', async () => {
+  const ok = await ctx.page.evaluate(() => {
+    const ts = window.gameScene.traderShip;
+    if (!ts) return false;
+    const [, cockpit] = ts.list;
+    return Math.abs(cockpit.x - 40 * ts.dir) < 1 && cockpit.geom.x1 === 0 && cockpit.geom.x3 === 0;
+  });
+  if (!ok) {
+    throw new Error('Cockpit not centered');
+  }
+});
+
+Then('the trader ship wings should be symmetrical', async () => {
+  const ok = await ctx.page.evaluate(() => {
+    const ts = window.gameScene.traderShip;
+    if (!ts) return false;
+    const [body, , w1, w2] = ts.list;
+    const b = body.getBounds();
+    const wb1 = w1.getBounds();
+    const wb2 = w2.getBounds();
+    const dist1 = Math.abs(wb1.centerX - b.centerX);
+    const dist2 = Math.abs(wb2.centerX - b.centerX);
+    return Math.abs(dist1 - dist2) < 1 && Math.abs(wb1.centerY - b.centerY) === Math.abs(wb2.centerY - b.centerY);
+  });
+  if (!ok) {
+    throw new Error('Wings not symmetrical');
   }
 });
 
