@@ -4,7 +4,11 @@
     this.debugGraphics = this.add.graphics();
     this.debugGraphics.setDepth(1000);
     this.input.keyboard.on('keydown-D', () => {
-        window.debugHitboxes = !window.debugHitboxes;
+        if (!window.debugHitboxes) {
+            window.debugHitboxes = { active: true };
+        } else {
+            window.debugHitboxes.active = !window.debugHitboxes.active;
+        }
     });
     // Create a slightly smaller ship using a polygon with an outline
     const shipPoints = [0, -20, 16, 16, 0, 8, -16, 16];

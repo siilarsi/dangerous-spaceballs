@@ -86,7 +86,9 @@
         if (!isNaN(ti)) {
             window.traderInterval = ti;
         }
-        window.debugHitboxes = params.get('debug') === '1';
+        window.debugHitboxes = {
+            active: params.get('debug') === '1'
+        };
     </script>
     <script src="static/lib/boot.js"></script>
 </body>
