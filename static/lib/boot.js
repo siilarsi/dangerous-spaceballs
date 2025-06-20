@@ -31,6 +31,7 @@
   window.sessionUpgrades = storage.getSessionUpgrades();
 
   updateInventoryPanel();
+  updateShopStatsPanel();
 
   const resetBtn = document.getElementById('reset-progress');
   const resetWarning = document.getElementById('reset-warning');
@@ -44,6 +45,7 @@
     document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => { el.textContent = 0; });
     document.getElementById('highscore-value').textContent = 0;
     updateInventoryPanel();
+    updateShopStatsPanel();
   }
 
   function handleResetClick(){

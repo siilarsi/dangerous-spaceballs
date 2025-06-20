@@ -85,9 +85,23 @@
     }
   }
 
+  function updateShopStatsPanel(stats = getCurrentStats()){
+    const map = {
+      fuel: 'shop-fuel',
+      ammo: 'shop-ammo',
+      thrust: 'shop-thrust',
+      reload: 'shop-reload'
+    };
+    for(const key in map){
+      const el = document.getElementById(map[key]);
+      if(el) el.textContent = stats[key];
+    }
+  }
+
   window.baseStats = baseStats;
   window.getCurrentStats = getCurrentStats;
   window.updateInventoryPanel = updateInventoryPanel;
+  window.updateShopStatsPanel = updateShopStatsPanel;
   window.clearPreview = clearPreview;
   window.previewUpgrade = previewUpgrade;
 })();
