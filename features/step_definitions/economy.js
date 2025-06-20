@@ -130,7 +130,7 @@ When('I click the reset button', async () => {
 });
 
 Then('the displayed credits should be {int}', async expected => {
-  const val = await ctx.page.$eval('#start-credits-value', el => parseInt(el.textContent));
+  const val = await ctx.page.evaluate(() => window.runCredits);
   if (val !== expected) {
     throw new Error(`Expected credits ${expected} but got ${val}`);
   }
