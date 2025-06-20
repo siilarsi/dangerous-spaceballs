@@ -1,9 +1,10 @@
 (function(){
   function create() {
     window.gameScene = this;
-    // Create a simple triangular ship using a polygon
-    const shipPoints = [0, -20, 15, 20, -15, 20];
-    this.ship = this.add.polygon(400, 300, shipPoints, 0xffffff);
+    // Create a slightly sleeker ship using a polygon with an outline
+    const shipPoints = [0, -25, 20, 20, 0, 10, -20, 20];
+    this.ship = this.add.polygon(400, 300, shipPoints, 0x00ffff);
+    this.ship.setStrokeStyle(2, 0xffffff);
     this.ship.setOrigin(0.5, 0.5);
 
     this.velocity = new Phaser.Math.Vector2(0, 0);
@@ -76,8 +77,8 @@
     const tex = this.textures.createCanvas(atmoKey, size, size);
     const ctx = tex.getContext();
     const grad = ctx.createRadialGradient(size / 2, size / 2, pr, size / 2, size / 2, atmoRadius);
-    grad.addColorStop(0, 'rgba(102,102,255,0.6)');
-    grad.addColorStop(1, 'rgba(102,102,255,0)');
+    grad.addColorStop(0, 'rgba(68,136,255,0.6)');
+    grad.addColorStop(1, 'rgba(68,136,255,0)');
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.arc(size / 2, size / 2, atmoRadius, 0, Math.PI * 2);
@@ -85,7 +86,7 @@
     tex.refresh();
     const atmosphere = this.add.image(pos.x, pos.y, atmoKey);
     atmosphere.setDepth(-1);
-    const planet = this.add.circle(pos.x, pos.y, pr, 0x6666ff);
+    const planet = this.add.circle(pos.x, pos.y, pr, 0x4488ff);
     this.planets.push({ sprite: planet, radius: pr, atmosphere });
 
     // Power-up orbit parameters
@@ -99,6 +100,8 @@
         const y = Phaser.Math.Between(0, this.scale.height);
         const radius = 20;
         const orb = this.add.circle(x, y, radius, color);
+        orb.setStrokeStyle(2, 0xffffff);
+        this.tweens.add({ targets: orb, scale: 1.2, yoyo: true, repeat: -1, duration: 800, delay: this.orbGrowthDuration });
         orb.setScale(0);
         const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
         const speed = 50 * this.orbSpeedMultiplier;
@@ -216,9 +219,12 @@
         const container = this.add.container(x, y);
         const color = Phaser.Display.Color.RandomRGB().color;
         const body = this.add.rectangle(0, 0, 80, 30, color);
+        body.setStrokeStyle(2, 0xffffff);
         const cockpit = this.add.triangle(40 * dir, 0, 20 * dir, -15, 60 * dir, 0, 20 * dir, 15, 0xcccccc);
+        const wing1 = this.add.triangle(-10 * dir, -15, -30 * dir, -25, 10 * dir, -15, -10 * dir, -5, color);
+        const wing2 = this.add.triangle(-10 * dir, 15, -30 * dir, 25, 10 * dir, 15, -10 * dir, 5, color);
         const flame = this.add.triangle(-50 * dir, 0, -10 * dir, -5, -20 * dir, 0, -10 * dir, 5, 0xffa500);
-        container.add([body, cockpit, flame]);
+        container.add([body, cockpit, wing1, wing2, flame]);
         this.tweens.add({ targets: flame, scaleX: 1.5, yoyo: true, repeat: -1, duration: 300 });
         container.dir = dir;
         container.baseSpeed = 40;
