@@ -160,8 +160,6 @@
     this.input.on('pointerdown', pointer => {
         if (pointer.button === 0 && this.ammo > 0) {
             this.isFiring = true;
-            sfx.laser.currentTime = 0;
-            sfx.laser.play().catch(() => {});
         }
         if (pointer.button === 2 && this.fuel > 0) {
             this.isBoosting = true;
@@ -187,10 +185,15 @@
     this.reticle.strokeCircle(0, 0, 10);
     this.reticle.lineBetween(-12, 0, 12, 0);
     this.reticle.lineBetween(0, -12, 0, 12);
+    this.reticleCooldown = this.add.graphics({ x: 400, y: 300 });
+    this.reticleCooldown.visible = false;
+    this.reticleCooldownProgress = 1;
 
     this.input.on('pointermove', pointer => {
         this.reticle.x = pointer.x;
         this.reticle.y = pointer.y;
+        this.reticleCooldown.x = pointer.x;
+        this.reticleCooldown.y = pointer.y;
     });
 
     // Trader ship controls
