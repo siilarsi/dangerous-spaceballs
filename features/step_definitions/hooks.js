@@ -8,17 +8,29 @@ BeforeAll(async () => {
   ctx.browser = await chromium.launch({
     args: ['--no-sandbox', '--ignore-certificate-errors', '--allow-file-access-from-files']
   });
+  ctx.context = await ctx.browser.newContext();
 });
 
 Before(async () => {
-  ctx.context = await ctx.browser.newContext();
   ctx.page = await ctx.context.newPage();
 });
 
 After(async () => {
-  await ctx.context?.close();
+  try {
+    if (ctx.page) {
+      await ctx.page.close();
+    }
+  } catch {
+    // ignore if already closed
+  }
 });
 
 AfterAll(async () => {
-  await ctx.browser?.close();
+  try {
+    if (ctx.browser) {
+      await ctx.browser.close();
+    }
+  } catch {
+    // ignore if already closed
+  }
 });
