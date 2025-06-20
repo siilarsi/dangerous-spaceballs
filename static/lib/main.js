@@ -223,6 +223,7 @@
                 this.powerUpFadeDuration = 12000;
                 this.urgentStarted = false;
                 this.urgentInterval = null;
+                this.urgencyOverlay = document.getElementById('urgency-overlay');
 
                 // Orb management
                 this.orbs = [];
@@ -405,7 +406,7 @@
                 this.timeRemaining -= deltaSeconds;
                 if (this.timeRemaining <= 0) {
                     clearInterval(this.urgentInterval);
-                    document.body.classList.remove('urgent');
+                    if (this.urgencyOverlay) this.urgencyOverlay.style.opacity = '0';
                     sfx.timeout.currentTime = 0;
                     sfx.timeout.play().catch(() => {});
                     window.currentGameplayMusic?.pause();
@@ -415,10 +416,19 @@
                     this.gameOver = true;
                     return;
                 }
-                if (this.timeRemaining <= 10 && !this.urgentStarted) {
-                    document.body.classList.add('urgent');
-                    this.urgentStarted = true;
-                    this.urgentInterval = setInterval(playTick, 2000);
+                if (this.timeRemaining <= 10) {
+                    if (!this.urgentStarted) {
+                        this.urgentStarted = true;
+                        this.urgentInterval = setInterval(playTick, 2000);
+                    }
+                    const intensity = 1 - Math.max(0, this.timeRemaining) / 10;
+                    if (this.urgencyOverlay) {
+                        this.urgencyOverlay.style.opacity = (intensity * 0.7).toFixed(2);
+                    }
+                } else if (this.urgentStarted) {
+                    this.urgentStarted = false;
+                    clearInterval(this.urgentInterval);
+                    if (this.urgencyOverlay) this.urgencyOverlay.style.opacity = '0';
                 }
 
                 if (this.isFiring && this.ammo > 0 && time > this.lastFired + this.fireRate) {
@@ -598,7 +608,7 @@
                             this.orbs.splice(i, 1);
                         } else {
                             clearInterval(this.urgentInterval);
-                            document.body.classList.remove('urgent');
+                            if (this.urgencyOverlay) this.urgencyOverlay.style.opacity = '0';
                             sfx.crash.currentTime = 0;
                             sfx.crash.play().catch(() => {});
                             sfx.explosion.currentTime = 0;
@@ -663,7 +673,7 @@
                             sessionStorage.setItem('sessionUpgrades', JSON.stringify(window.sessionUpgrades));
                         } else {
                             clearInterval(this.urgentInterval);
-                            document.body.classList.remove('urgent');
+                            if (this.urgencyOverlay) this.urgencyOverlay.style.opacity = '0';
                             sfx.crash.currentTime = 0;
                             sfx.crash.play().catch(() => {});
                             window.currentGameplayMusic?.pause();

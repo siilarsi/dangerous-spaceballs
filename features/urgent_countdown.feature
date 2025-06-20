@@ -4,4 +4,4 @@ Feature: Urgent countdown display
     When I click the start screen
     And the game should appear after a short delay
     And I force the timer below ten seconds
-    Then the screen should pulse red
+    Then the screen should tint red
