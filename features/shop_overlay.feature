@@ -11,7 +11,7 @@ Feature: Shop overlay
     And the shop overlay should be visible
     And the shop overlay width should be at least 320 px
     And the shop credits should be 0
-    And the shop stat "Ammo Limit" should be "50"
+    And the shop stat "Ammo Limit" should be "25"
     When I click the undock button
     Then the shop overlay should not be visible
     And the docking banner should not be visible
