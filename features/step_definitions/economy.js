@@ -6,12 +6,12 @@ When('I open the shop tab', async () => {
 });
 
 Then('the shop should list upgrades', async () => {
-  await ctx.page.waitForSelector('#shop-panel .shop-item');
+  await ctx.page.waitForSelector('#shop-overlay .shop-item');
 });
 
 Then('each upgrade should appear as a card', async () => {
-  await ctx.page.waitForSelector('#shop-panel .shop-item');
-  const ok = await ctx.page.$$eval('#shop-panel .shop-item', items =>
+  await ctx.page.waitForSelector('#shop-overlay .shop-item');
+  const ok = await ctx.page.$$eval('#shop-overlay .shop-item', items =>
     items.every(i =>
       i.querySelector('.icon') &&
       i.querySelector('.desc') &&
@@ -49,7 +49,7 @@ When('I buy the upgrade {string}', async name => {
 });
 
 When('I click buy on the upgrade {string}', async name => {
-  await ctx.page.$$eval('#shop-panel .shop-item', (items, n) => {
+  await ctx.page.$$eval('#shop-overlay .shop-item', (items, n) => {
     const el = items.find(i => i.querySelector('.name').textContent.trim() === n);
     el.querySelector('.buy-btn').click();
   }, name);

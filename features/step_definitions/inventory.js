@@ -33,14 +33,14 @@ Then('the inventory stat icon for {string} should be {string}', async (label, ex
 });
 
 When('I hover over the upgrade {string}', async name => {
-  await ctx.page.$$eval('#shop-panel .shop-item', (items, n) => {
+  await ctx.page.$$eval('#shop-overlay .shop-item', (items, n) => {
     const el = items.find(i => i.querySelector('.name').textContent.trim() === n);
     if (el) el.dispatchEvent(new Event('mouseenter', { bubbles: true }));
   }, name);
 });
 
 When('I stop hovering', async () => {
-  await ctx.page.$$eval('#shop-panel .shop-item', items => {
+  await ctx.page.$$eval('#shop-overlay .shop-item', items => {
     items.forEach(el => el.dispatchEvent(new Event('mouseleave', { bubbles: true })));
   });
 });

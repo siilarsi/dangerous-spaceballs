@@ -1,0 +1,57 @@
+(function(){
+  const items = [
+    { id: 'extra_fuel', name: 'Extra Fuel', cost: 5, desc: '+50 Fuel Capacity' },
+    { id: 'max_ammo', name: 'Max Ammo', cost: 5, desc: '+50 Ammo Limit' },
+    { id: 'fast_reload', name: 'Fast Reload', cost: 5, desc: 'Reload 10 faster' },
+    { id: 'shield', name: 'Shield', cost: 5, desc: 'Start with a shield' }
+  ];
+
+  function purchase(item){
+    if(window.totalCredits < item.cost) return false;
+    window.totalCredits -= item.cost;
+    storage.setCredits(window.totalCredits);
+    document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => {
+      el.textContent = window.totalCredits;
+    });
+    window.permanentUpgrades.push(item.id);
+    storage.setPermanentUpgrades(window.permanentUpgrades);
+    updateInventoryPanel();
+    updateShopStatsPanel();
+    return true;
+  }
+
+  function buildList(){
+    const container = document.getElementById('shop-items');
+    if(!container) return;
+    container.innerHTML = '';
+    for(const item of items){
+      const li = document.createElement('li');
+      li.className = 'shop-item';
+      const icon = document.createElement('span');
+      icon.className = 'icon';
+      const name = document.createElement('span');
+      name.className = 'name';
+      name.textContent = item.name;
+      const desc = document.createElement('span');
+      desc.className = 'desc';
+      desc.textContent = item.desc;
+      const price = document.createElement('span');
+      price.className = 'price-badge';
+      price.textContent = item.cost;
+      const btn = document.createElement('button');
+      btn.className = 'buy-btn';
+      btn.textContent = 'Buy';
+      btn.addEventListener('click', () => purchase(item));
+      li.appendChild(icon);
+      li.appendChild(name);
+      li.appendChild(desc);
+      li.appendChild(price);
+      li.appendChild(btn);
+      li.addEventListener('mouseenter', () => previewUpgrade(item));
+      li.addEventListener('mouseleave', clearPreview);
+      container.appendChild(li);
+    }
+  }
+
+  window.shop = { items, purchase, render: buildList };
+})();

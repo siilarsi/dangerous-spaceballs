@@ -104,6 +104,22 @@
 #shop-overlay li.thrust::before { content: '🚀'; margin-right: 4px; }
 #shop-overlay li.reload::before { content: '⚡'; margin-right: 4px; }
 
+#shop-overlay .shop-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+#shop-overlay .price-badge {
+    margin-left: auto;
+    background: #333;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+#shop-overlay .buy-btn {
+    margin-left: 4px;
+    padding: 2px 6px;
+}
+
 #shop-coming {
     margin-top: 10px;
     font-style: italic;

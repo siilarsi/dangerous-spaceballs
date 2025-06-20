@@ -32,6 +32,7 @@
 
   updateInventoryPanel();
   updateShopStatsPanel();
+  window.shop?.render?.();
 
   const resetBtn = document.getElementById('reset-progress');
   const resetWarning = document.getElementById('reset-warning');
