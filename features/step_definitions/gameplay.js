@@ -139,3 +139,11 @@ Then('the ship speed should be below {int}', async max => {
 Then('the game should be over', async () => {
   await ctx.page.waitForFunction(() => window.gameScene?.gameOver);
 });
+
+Then('the game should not be over', async () => {
+  await ctx.page.waitForFunction(() => window.gameScene);
+  const over = await ctx.page.evaluate(() => window.gameScene.gameOver);
+  if (over) {
+    throw new Error('Game unexpectedly over');
+  }
+});

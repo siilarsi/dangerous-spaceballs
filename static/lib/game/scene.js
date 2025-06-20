@@ -58,7 +58,8 @@
 
     // Planet obstacle
     this.planets = [];
-    this.gravityStrength = 3000;
+    // Reduce gravitational pull slightly for smoother maneuvers
+    this.gravityStrength = 2000;
     const pr = 120;
     const atmoRadius = pr * 1.5;
     const margin = atmoRadius + 20;
