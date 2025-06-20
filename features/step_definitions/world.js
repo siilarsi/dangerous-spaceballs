@@ -188,7 +188,7 @@ When('I spawn a stationary red orb offset by {int} {int} from the ship', async (
     orb.setScale(1);
     gs.orbs.push({ sprite: orb, radius: 20, vx: 0, vy: 0, spawnTime: gs.time.now, growing: false });
   }, { dx, dy });
-  await new Promise(r => setTimeout(r, 100));
+  await new Promise(r => setTimeout(r, 300));
 });
 
 Then('no orbs should be visible', async () => {
