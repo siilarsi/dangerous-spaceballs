@@ -158,6 +158,13 @@ Then('the planet radius should be {int}', async expected => {
   }
 });
 
+Then('there should be {int} planets', async expected => {
+  const count = await ctx.page.evaluate(() => window.gameScene?.planets?.length || 0);
+  if (count !== expected) {
+    throw new Error(`Expected ${expected} planets but found ${count}`);
+  }
+});
+
 Then('planet atmospheres should be visible', async () => {
   const visible = await ctx.page.evaluate(() => {
     const gs = window.gameScene;

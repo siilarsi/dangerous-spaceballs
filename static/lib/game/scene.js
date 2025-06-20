@@ -35,7 +35,7 @@
     this.floatingTexts = [];
     this.nextPowerUpSpawn = 5000;
     this.powerUpSpawnRate = 8000; // milliseconds
-    this.powerUpFadeDuration = 12000;
+    this.powerUpFadeDuration = 9500;
     this.urgentStarted = false;
     this.urgentInterval = null;
     this.urgencyOverlay = document.getElementById('urgency-overlay');
@@ -62,35 +62,38 @@
     };
     this.showLevelBanner(1);
 
-    // Planet obstacles
+    // Planet obstacle
     this.planets = [];
     this.gravityStrength = 3000;
-    const pr = 100;
-    const positions = [
-        { x: pr, y: pr },
-        { x: this.scale.width - pr, y: pr },
-        { x: this.scale.width / 2, y: this.scale.height - pr }
-    ];
-    for (let i = 0; i < positions.length; i++) {
-        const pos = positions[i];
-        const atmoKey = `atmo-${i}`;
-        const atmoRadius = pr * 1.5;
-        const size = atmoRadius * 2;
-        const tex = this.textures.createCanvas(atmoKey, size, size);
-        const ctx = tex.getContext();
-        const grad = ctx.createRadialGradient(size / 2, size / 2, pr, size / 2, size / 2, atmoRadius);
-        grad.addColorStop(0, 'rgba(102,102,255,0.6)');
-        grad.addColorStop(1, 'rgba(102,102,255,0)');
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(size / 2, size / 2, atmoRadius, 0, Math.PI * 2);
-        ctx.fill();
-        tex.refresh();
-        const atmosphere = this.add.image(pos.x, pos.y, atmoKey);
-        atmosphere.setDepth(-1);
-        const planet = this.add.circle(pos.x, pos.y, pr, 0x6666ff);
-        this.planets.push({ sprite: planet, radius: pr, atmosphere });
-    }
+    const pr = 120;
+    const atmoRadius = pr * 1.5;
+    const margin = atmoRadius + 20;
+    let pos;
+    do {
+        pos = {
+            x: Phaser.Math.Between(margin, this.scale.width - margin),
+            y: Phaser.Math.Between(margin, this.scale.height - margin)
+        };
+    } while (
+        Phaser.Math.Distance.Between(pos.x, pos.y, this.ship.x, this.ship.y) < 400 ||
+        Math.abs(pos.y - this.ship.y) < 150
+    );
+    const atmoKey = 'atmo-0';
+    const size = atmoRadius * 2;
+    const tex = this.textures.createCanvas(atmoKey, size, size);
+    const ctx = tex.getContext();
+    const grad = ctx.createRadialGradient(size / 2, size / 2, pr, size / 2, size / 2, atmoRadius);
+    grad.addColorStop(0, 'rgba(102,102,255,0.6)');
+    grad.addColorStop(1, 'rgba(102,102,255,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, atmoRadius, 0, Math.PI * 2);
+    ctx.fill();
+    tex.refresh();
+    const atmosphere = this.add.image(pos.x, pos.y, atmoKey);
+    atmosphere.setDepth(-1);
+    const planet = this.add.circle(pos.x, pos.y, pr, 0x6666ff);
+    this.planets.push({ sprite: planet, radius: pr, atmosphere });
 
     this.spawnOrb = (color, t) => {
         const x = Phaser.Math.Between(0, this.scale.width);

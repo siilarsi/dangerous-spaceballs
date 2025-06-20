@@ -1,4 +1,10 @@
 Feature: Planetary gravity
+  Scenario: A single large planet spawns randomly
+    Given I open the game page
+    When I click the start screen
+    Then the game should appear after a short delay
+    And there should be 1 planets
+    And the planet radius should be 120
   Scenario: Planets pull on the ship
     Given I open the game page
     When I click the start screen
