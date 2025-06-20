@@ -34,7 +34,7 @@ Feature: Thruster Boost
     When I hold the right mouse button for 300 ms
     Then the flame scale should be 1
     When I release the right mouse button
-    When I set the ship boost thrust to 400
+    When I set the ship boost thrust to 200
     When I hold the right mouse button for 300 ms
     Then the flame scale should be 2
     When I release the right mouse button

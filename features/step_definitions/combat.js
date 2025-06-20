@@ -23,7 +23,8 @@ Then('the flame should be visible', async () => {
 
 Then('the fuel should decrease', async () => {
   const fuel = await ctx.page.evaluate(() => window.gameScene.fuel);
-  if (fuel >= 200) {
+  const max = await ctx.page.evaluate(() => window.baseStats.maxFuel);
+  if (fuel >= max) {
     throw new Error('Fuel did not decrease');
   }
 });
@@ -50,7 +51,8 @@ Then('bullets should be fired', async () => {
 
 Then('the ammo should decrease', async () => {
   const ammo = await ctx.page.evaluate(() => window.gameScene.ammo);
-  if (ammo >= 50) {
+  const base = await ctx.page.evaluate(() => window.baseStats.ammo);
+  if (ammo >= base) {
     throw new Error('Ammo did not decrease');
   }
 });
