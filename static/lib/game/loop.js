@@ -344,7 +344,7 @@
         } else if (this.dockingStart) {
             this.abortDocking();
         }
-        if (!this.isDocked && !this.dockingStart && distSq < 50 * 50) {
+        if (!this.isDocked && !this.dockingStart && distSq < 30 * 30) {
             const angle = Math.atan2(dy, dx);
             const force = 300;
             this.velocity.x += Math.cos(angle) * force;
