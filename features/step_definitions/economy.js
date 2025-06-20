@@ -106,6 +106,12 @@ Then('the streak text {string} should appear', async text => {
   }, text);
 });
 
+Then('the floating text {string} should appear', async text => {
+  await ctx.page.waitForFunction(t => {
+    return window.gameScene.floatingTexts.some(ft => ft.sprite.text === t);
+  }, text);
+});
+
 Given('the high score is {int}', async val => {
   await ctx.page.evaluate(score => {
     localStorage.setItem('highscore', score);
