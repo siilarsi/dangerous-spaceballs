@@ -309,10 +309,21 @@
 
     const width = this.scale.width;
     const height = this.scale.height;
-    if (this.ship.x < 0) this.ship.x = width;
-    if (this.ship.x > width) this.ship.x = 0;
-    if (this.ship.y < 0) this.ship.y = height;
-    if (this.ship.y > height) this.ship.y = 0;
+    const shipR = 20;
+    if (this.ship.x - shipR < 0 && this.velocity.x < 0) {
+        this.velocity.x *= -1;
+        this.ship.x = shipR;
+    } else if (this.ship.x + shipR > width && this.velocity.x > 0) {
+        this.velocity.x *= -1;
+        this.ship.x = width - shipR;
+    }
+    if (this.ship.y - shipR < 0 && this.velocity.y < 0) {
+        this.velocity.y *= -1;
+        this.ship.y = shipR;
+    } else if (this.ship.y + shipR > height && this.velocity.y > 0) {
+        this.velocity.y *= -1;
+        this.ship.y = height - shipR;
+    }
 
     const fuelPct = Math.max(0, Math.min(100, this.fuel / this.maxFuel * 100));
     const fb = document.getElementById('fuel-bar');
