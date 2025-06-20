@@ -4,6 +4,7 @@ Feature: Power-up pickups
     When I click the start screen
     Then the game should appear after a short delay
     When I spawn an ammo power-up on the ship
+    When I wait for 300 ms
     Then the ammo should increase by 15
     And the floating text "+15 Ammo" should appear
 
@@ -13,6 +14,7 @@ Feature: Power-up pickups
     Then the game should appear after a short delay
     When I set the game level to 10
     When I spawn an ammo power-up on the ship
+    When I wait for 300 ms
     Then the ammo should increase by 8
     And the floating text "+8 Ammo" should appear
 
