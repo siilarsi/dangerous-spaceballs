@@ -31,6 +31,7 @@
   }
 
   window.audioElements = { menuMusic, playTracks, sfx };
+  window.sfx = sfx;
   window.playTick = playTick;
 
   menuMusic.play().catch(() => {});
