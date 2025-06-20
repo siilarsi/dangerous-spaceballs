@@ -11,9 +11,11 @@
     this.ship = this.add.polygon(400, 300, shipPoints, 0x00ffff);
     this.ship.setStrokeStyle(2, 0xffffff);
     this.ship.setOrigin(0.5, 0.5);
-    const R = 12;
-    const offsetX = this.ship.width / 2 - R;
-    const offsetY = this.ship.height / 3 - R;
+    const shipW = this.ship.width;
+    const shipH = this.ship.height;
+    const R = Math.round(shipW / 2);
+    const offsetX = 0;
+    const offsetY = -shipH / 2;
     this.shipRadius = R;
     this.shipBodyOffset = new Phaser.Math.Vector2(offsetX, offsetY);
 
