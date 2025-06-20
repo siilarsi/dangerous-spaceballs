@@ -3,6 +3,7 @@
     maxFuel: 200,
     ammo: 50,
     boostThrust: 200,
+    reloadTime: 100,
     shieldDuration: 0
   };
 
@@ -10,21 +11,47 @@
     let fuel = baseStats.maxFuel;
     let ammo = baseStats.ammo;
     let thrust = baseStats.boostThrust;
+    let reload = baseStats.reloadTime;
     let shield = baseStats.shieldDuration;
     const active = [...(window.permanentUpgrades || []), ...(window.sessionUpgrades || [])];
     for (const id of active) {
       if (id === 'extra_fuel') fuel += 50;
       else if (id === 'max_ammo') ammo += 50;
+      else if (id === 'fast_reload') reload = Math.max(20, reload - 10);
       else if (id === 'shield') shield = 1;
     }
-    return {fuel, ammo, thrust, shield};
+    return {fuel, ammo, thrust, reload, shield};
   }
 
-  function updateInventoryPanel(stats = getCurrentStats()){
+  function getCreditInvestments(){
+    const map = {};
+    if(window.shop?.items){
+      for(const it of window.shop.items){
+        map[it.id] = it.cost;
+      }
+    }
+    const active = [...(window.permanentUpgrades || []), ...(window.sessionUpgrades || [])];
+    const invest = { fuel: 0, ammo: 0, reload: 0, thrust: 0, shield: 0 };
+    for(const id of active){
+      if(id === 'extra_fuel') invest.fuel += map[id] || 0;
+      else if(id === 'max_ammo') invest.ammo += map[id] || 0;
+      else if(id === 'fast_reload') invest.reload += map[id] || 0;
+      else if(id === 'shield') invest.shield += map[id] || 0;
+    }
+    return invest;
+  }
+
+  function updateInventoryPanel(stats = getCurrentStats(), invest = getCreditInvestments()){
     document.getElementById('inv-fuel').textContent = stats.fuel;
+    document.getElementById('inv-fuel-invested').textContent = invest.fuel;
     document.getElementById('inv-ammo').textContent = stats.ammo;
+    document.getElementById('inv-ammo-invested').textContent = invest.ammo;
+    document.getElementById('inv-reload').textContent = stats.reload;
+    document.getElementById('inv-reload-invested').textContent = invest.reload;
     document.getElementById('inv-thrust').textContent = stats.thrust;
+    document.getElementById('inv-thrust-invested').textContent = invest.thrust;
     document.getElementById('inv-shield').textContent = stats.shield;
+    document.getElementById('inv-shield-invested').textContent = invest.shield;
   }
 
   function clearPreview(){

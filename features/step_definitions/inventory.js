@@ -66,3 +66,14 @@ Then('the inventory stat {string} should be highlighted', async label => {
     throw new Error('Stat not highlighted');
   }
 });
+
+Then('the inventory investment for {string} should be {string}', async (label, expected) => {
+  const actual = await ctx.page.evaluate(lbl => {
+    const items = Array.from(document.querySelectorAll('#inventory-panel li'));
+    const el = items.find(i => i.textContent.trim().toLowerCase().startsWith(lbl.toLowerCase()));
+    return el ? el.querySelector('.invest')?.textContent.trim() : null;
+  }, label);
+  if (actual !== expected) {
+    throw new Error(`Expected investment ${expected} but got ${actual}`);
+  }
+});
