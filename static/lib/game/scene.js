@@ -35,13 +35,13 @@
 
     // Orb management
     this.orbs = [];
-    this.nextOrbSpawn = 0;
-    this.orbSpawnRate = 3000; // milliseconds
+    this.nextOrbSpawn = Infinity;
+    this.orbSpawnRate = 3000; // milliseconds (unused)
     this.orbGrowthDuration = 500;
     this.orbSpeedMultiplier = 1;
 
     this.level = 1;
-    const duration = window.levelDuration || 15000;
+    const duration = window.levelDuration || 30000;
     this.levelDuration = duration;
     this.startTime = null;
     this.nextLevelTime = null;
@@ -111,6 +111,9 @@
             growing: true
         });
     };
+
+    // Start with a single red orb on screen
+    this.spawnOrb(0xff0000, 0);
 
     // Flame effect for boosting
     this.flame = this.add.triangle(0, 0, 0, 0, 5, 15, -5, 15, 0xffa500);

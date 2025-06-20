@@ -1,6 +1,6 @@
 (function(){
   const baseStats = {
-    maxFuel: 25,
+    maxFuel: 50,
     ammo: 25,
     boostThrust: 100,
     reloadTime: 3500,
