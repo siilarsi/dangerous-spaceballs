@@ -1,0 +1,41 @@
+#inventory-panel {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+}
+
+#inventory-panel h2 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 18px;
+}
+
+#inventory-panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#inventory-panel li {
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+#inventory-panel li.highlight {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 2px 4px;
+}
+
+#inventory-panel li::before {
+    margin-right: 4px;
+}
+#inventory-panel li.fuel::before { content: '⛽'; }
+#inventory-panel li.ammo::before { content: '🔫'; }
+#inventory-panel li.thrust::before { content: '🚀'; }
+#inventory-panel li.shield::before { content: '🛡️'; }
