@@ -1,0 +1,51 @@
+.reset-btn {
+    background: #f44336;
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 0 5px #f44336;
+    transition: box-shadow 0.2s;
+}
+
+.reset-btn:hover {
+    box-shadow: 0 0 10px #fff;
+}
+#legend {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    display: none;
+}
+
+.legend-dot {
+    position: relative;
+    display: inline-block;
+    width: 14px;
+    height: 12px;
+    margin-right: 4px;
+    background: #8b4513;
+    border-radius: 2px;
+}
+
+.legend-dot::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    background: var(--lid-color);
+}
+
+.legend-dot.ammo { --lid-color: #ffff00; }
+.legend-dot.fuel  { --lid-color: #ffa500; }
+.legend-dot.time  { --lid-color: #00ff00; }
