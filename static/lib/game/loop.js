@@ -235,7 +235,7 @@
             }
         }
         // Check ship collision
-        const shipR = 20;
+        const shipR = this.shipRadius;
         const dx = this.ship.x - o.sprite.x;
         const dy = this.ship.y - o.sprite.y;
         if (dx * dx + dy * dy <= (shipR + radius * o.sprite.scaleX) * (shipR + radius * o.sprite.scaleX)) {
@@ -376,7 +376,7 @@
     for (let p of this.planets) {
         const dxp = this.ship.x - p.sprite.x;
         const dyp = this.ship.y - p.sprite.y;
-        const shipR = 20;
+        const shipR = this.shipRadius;
         if (dxp * dxp + dyp * dyp <= (shipR + p.radius) * (shipR + p.radius)) {
             if (this.shield) {
                 this.shield = false;
@@ -399,7 +399,7 @@
 
     const width = this.scale.width;
     const height = this.scale.height;
-    const shipR = 20;
+    const shipR = this.shipRadius;
     if (this.ship.x - shipR < 0 && this.velocity.x < 0) {
         this.velocity.x *= -1;
         this.ship.x = shipR;
