@@ -242,6 +242,16 @@ When('I spawn the trader ship on the ship', async () => {
   await ctx.page.waitForTimeout(50);
 });
 
+When('I spawn the trader ship at offset {int} {int} from the ship', async (dx, dy) => {
+  await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.spawnTraderShip);
+  await ctx.page.evaluate(({ dx, dy }) => {
+    const gs = window.gameScene;
+    const dir = dx > 0 ? -1 : 1;
+    gs.spawnTraderShip(gs.ship.x + dx, gs.ship.y + dy, dir);
+  }, { dx, dy });
+  await ctx.page.waitForTimeout(50);
+});
+
 When('I record the trader ship position', async () => {
   await ctx.page.waitForFunction(() => window.gameScene?.traderShip);
   ctx.lastTraderPos = await ctx.page.evaluate(() => ({ x: window.gameScene.traderShip.x, y: window.gameScene.traderShip.y }));
