@@ -398,6 +398,20 @@
     } else {
         this.reticleCooldown.visible = false;
     }
+
+    if (this.debugGraphics) {
+        this.debugGraphics.clear();
+        if (window.debugHitboxes) {
+            this.debugGraphics.lineStyle(1, 0xff00ff, 0.6);
+            this.debugGraphics.strokeCircle(this.ship.x, this.ship.y, this.shipRadius);
+            for (const p of this.planets) {
+                this.debugGraphics.strokeCircle(p.sprite.x, p.sprite.y, p.radius);
+            }
+            for (const o of this.orbs) {
+                this.debugGraphics.strokeCircle(o.sprite.x, o.sprite.y, o.radius * o.sprite.scaleX);
+            }
+        }
+    }
 }
   window.gameUpdate = update;
 })();
