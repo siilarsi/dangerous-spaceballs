@@ -73,7 +73,7 @@
         const dy = p.sprite.y - this.ship.y;
         const distSq = dx * dx + dy * dy;
         if (distSq > 1) {
-            const acc = this.gravityStrength / distSq;
+            const acc = this.gravityStrength / Math.pow(distSq, this.gravityFalloff);
             this.velocity.x += dx * acc * deltaSeconds;
             this.velocity.y += dy * acc * deltaSeconds;
         }
@@ -85,7 +85,7 @@
             const dy = p.sprite.y - o.sprite.y;
             const distSq = dx * dx + dy * dy;
             if (distSq > 1) {
-                const acc = this.gravityStrength / distSq;
+                const acc = this.gravityStrength / Math.pow(distSq, this.gravityFalloff);
                 o.vx += dx * acc * deltaSeconds;
                 o.vy += dy * acc * deltaSeconds;
             }
