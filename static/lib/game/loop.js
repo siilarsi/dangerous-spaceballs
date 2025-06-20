@@ -28,6 +28,8 @@
     const sin = Math.sin(this.ship.rotation);
     const shipHitX = this.ship.x + this.shipBodyOffset.x * cos - this.shipBodyOffset.y * sin;
     const shipHitY = this.ship.y + this.shipBodyOffset.x * sin + this.shipBodyOffset.y * cos;
+    Matter.Body.setPosition(this.shipBody, { x: shipHitX, y: shipHitY });
+    Matter.Body.setAngle(this.shipBody, this.ship.rotation);
 
 
     if (this.isFiring && this.ammo > 0 && time > this.lastFired + this.fireRate) {
@@ -204,11 +206,10 @@
                 break;
             }
         }
-        // Check ship collision
-        const shipR = this.shipRadius;
-        const dx = shipHitX - o.sprite.x;
-        const dy = shipHitY - o.sprite.y;
-        if (dx * dx + dy * dy <= (shipR + radius * o.sprite.scaleX) * (shipR + radius * o.sprite.scaleX)) {
+        // Check ship collision using Matter SAT
+        const orbBody = Matter.Bodies.circle(o.sprite.x, o.sprite.y, radius * o.sprite.scaleX);
+        const collision = Matter.SAT.collides(this.shipBody, orbBody);
+        if (collision.collided) {
             if (this.shield) {
                 this.shield = false;
                 window.sessionUpgrades = window.sessionUpgrades.filter(u => u !== 'shield');
@@ -337,10 +338,9 @@
     this.ship.y += this.velocity.y * deltaSeconds;
 
     for (let p of this.planets) {
-        const dxp = shipHitX - p.sprite.x;
-        const dyp = shipHitY - p.sprite.y;
-        const shipR = this.shipRadius;
-        if (dxp * dxp + dyp * dyp <= (shipR + p.radius) * (shipR + p.radius)) {
+        const planetBody = Matter.Bodies.circle(p.sprite.x, p.sprite.y, p.radius);
+        const collision = Matter.SAT.collides(this.shipBody, planetBody);
+        if (collision.collided) {
             if (this.shield) {
                 this.shield = false;
                 window.sessionUpgrades = window.sessionUpgrades.filter(u => u !== 'shield');

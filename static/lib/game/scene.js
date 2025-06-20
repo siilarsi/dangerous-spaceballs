@@ -15,6 +15,11 @@
     this.ship = this.add.polygon(400, 300, shipPoints, 0x00ffff);
     this.ship.setStrokeStyle(2, 0xffffff);
     this.ship.setOrigin(0.5, 0.5);
+    const verts = [];
+    for (let i = 0; i < shipPoints.length; i += 2) {
+        verts.push({ x: shipPoints[i], y: shipPoints[i + 1] });
+    }
+    this.shipBody = Matter.Bodies.fromVertices(this.ship.x, this.ship.y, verts, { inertia: Infinity }, true);
     const shipW = this.ship.width;
     const shipH = this.ship.height;
     let maxDistSq = 0;
