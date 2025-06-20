@@ -22,7 +22,6 @@
     document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => { el.textContent = 0; });
     document.getElementById('highscore-value').textContent = 0;
     updateInventoryPanel();
-    shop.renderShop();
   }
 
   const gameOverBox = document.getElementById('game-over');
@@ -62,18 +61,9 @@
     });
   }
 
-  document.getElementById('shop-tab').addEventListener('click', () => {
-    shop.renderShop();
-    document.getElementById('shop-panel').style.display = 'block';
-  });
   document.getElementById('reset-progress').addEventListener('click', resetProgress);
-  document.getElementById('close-shop').addEventListener('click', () => {
-    document.getElementById('shop-panel').style.display = 'none';
-  });
-  document.getElementById('shop-panel').addEventListener('click', e => { e.stopPropagation(); });
 
-  document.getElementById('start-screen').addEventListener('click', function(e){
-    if(e.target.id === 'shop-tab' || e.target.closest('#shop-panel')){ return; }
+  document.getElementById('start-screen').addEventListener('click', function(){
     document.getElementById('start-screen').style.display = 'none';
     const promo = document.getElementById('promo-animation');
     promo.style.display = 'flex';

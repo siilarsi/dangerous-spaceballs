@@ -1,4 +1,4 @@
-const { When, Then } = require('@cucumber/cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 const ctx = require('./context');
 
 Then('the star background should cover the game area', async () => {
@@ -226,5 +226,39 @@ Then('the ship should be within the screen bounds', async () => {
   }));
   if (pos.x < 0 || pos.x > pos.w || pos.y < 0 || pos.y > pos.h) {
     throw new Error('Ship out of bounds');
+  }
+});
+
+Given('the trader spawn interval is {int} ms', async ms => {
+  await ctx.page.evaluate(m => { window.traderInterval = m; }, ms);
+});
+
+When('I spawn the trader ship on the ship', async () => {
+  await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.spawnTraderShip);
+  await ctx.page.evaluate(() => {
+    const gs = window.gameScene;
+    gs.spawnTraderShip(gs.ship.x, gs.ship.y);
+  });
+  await ctx.page.waitForTimeout(50);
+});
+
+When('I record the trader ship position', async () => {
+  await ctx.page.waitForFunction(() => window.gameScene?.traderShip);
+  ctx.lastTraderPos = await ctx.page.evaluate(() => ({ x: window.gameScene.traderShip.x, y: window.gameScene.traderShip.y }));
+});
+
+Then('a trader ship should be visible', async () => {
+  const visible = await ctx.page.evaluate(() => !!window.gameScene.traderShip);
+  if (!visible) {
+    throw new Error('Trader ship not visible');
+  }
+});
+
+Then('the trader ship should have moved', async () => {
+  await ctx.page.waitForFunction(() => window.gameScene?.traderShip);
+  const pos = await ctx.page.evaluate(() => ({ x: window.gameScene.traderShip.x, y: window.gameScene.traderShip.y }));
+  const dist = Math.hypot(pos.x - ctx.lastTraderPos.x, pos.y - ctx.lastTraderPos.y);
+  if (dist < 2) {
+    throw new Error('Trader ship did not move');
   }
 });
