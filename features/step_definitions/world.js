@@ -262,3 +262,21 @@ Then('the trader ship should have moved', async () => {
     throw new Error('Trader ship did not move');
   }
 });
+
+Then('the docking banner should be visible', async () => {
+  const display = await ctx.page.$eval('#dock-banner', el => getComputedStyle(el).display);
+  if (display === 'none') {
+    throw new Error('Dock banner not visible');
+  }
+});
+
+Then('the docking banner should not be visible', async () => {
+  const display = await ctx.page.$eval('#dock-banner', el => getComputedStyle(el).display);
+  if (display !== 'none') {
+    throw new Error('Dock banner should be hidden');
+  }
+});
+
+When('I click the undock button', async () => {
+  await ctx.page.click('#undock-btn');
+});
