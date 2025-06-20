@@ -84,6 +84,9 @@
     this.flame.visible = this.isBoosting && this.fuel > 0;
     if (this.flame.visible) {
         this.flame.rotation = this.ship.rotation;
+        const scale = this.boostThrust / window.baseStats.boostThrust;
+        this.flame.scaleX = scale;
+        this.flame.scaleY = scale;
         this.flame.x = this.ship.x - Math.cos(noseAngle) * 20;
         this.flame.y = this.ship.y - Math.sin(noseAngle) * 20;
     }
@@ -426,6 +429,15 @@
     document.getElementById('streak').textContent = this.streak;
     document.getElementById('credits').textContent = this.credits;
     document.getElementById('time-remaining').textContent = Math.ceil(this.timeRemaining);
+    const cd = document.getElementById('reload-indicator');
+    const fill = cd.querySelector('.fill');
+    const prog = Math.min(1, (time - this.lastFired) / this.fireRate);
+    if (prog < 1) {
+        cd.style.display = 'block';
+        fill.style.width = (prog * 100) + '%';
+    } else {
+        cd.style.display = 'none';
+    }
 }
   window.gameUpdate = update;
 })();

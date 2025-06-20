@@ -3,7 +3,7 @@
     maxFuel: 200,
     ammo: 50,
     boostThrust: 200,
-    reloadTime: 100,
+    reloadTime: 3500,
     shieldDuration: 0
   };
 
@@ -15,9 +15,10 @@
     let shield = baseStats.shieldDuration;
     const active = [...(window.permanentUpgrades || []), ...(window.sessionUpgrades || [])];
     for (const id of active) {
-      if (id === 'extra_fuel') fuel += 5;
-      else if (id === 'max_ammo') ammo += 5;
-      else if (id === 'fast_reload') reload = Math.max(20, Math.round(reload * 0.98));
+      if (id === 'extra_fuel') fuel += 25;
+      else if (id === 'max_ammo') ammo += 25;
+      else if (id === 'boost_thrust') thrust += 25;
+      else if (id === 'fast_reload') reload = Math.max(200, reload - 200);
       else if (id === 'shield') shield = 1;
     }
     return {fuel, ammo, thrust, reload, shield};
@@ -35,6 +36,7 @@
     for(const id of active){
       if(id === 'extra_fuel') invest.fuel += map[id] || 0;
       else if(id === 'max_ammo') invest.ammo += map[id] || 0;
+      else if(id === 'boost_thrust') invest.thrust += map[id] || 0;
       else if(id === 'fast_reload') invest.reload += map[id] || 0;
       else if(id === 'shield') invest.shield += map[id] || 0;
     }
@@ -66,13 +68,16 @@
     let statKey;
     if(item.id === 'extra_fuel'){
       statKey = 'fuel';
-      preview.fuel += 5;
+      preview.fuel += 25;
     }else if(item.id === 'max_ammo'){
       statKey = 'ammo';
-      preview.ammo += 5;
+      preview.ammo += 25;
+    }else if(item.id === 'boost_thrust'){
+      statKey = 'thrust';
+      preview.thrust += 25;
     }else if(item.id === 'fast_reload'){
       statKey = 'reload';
-      preview.reload = Math.max(20, Math.round(preview.reload * 0.98));
+      preview.reload = Math.max(200, preview.reload - 200);
     }else if(item.id === 'shield'){
       statKey = 'shield';
       preview.shield = 1;

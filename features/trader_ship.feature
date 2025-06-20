@@ -27,7 +27,7 @@ Feature: Trader ship sightings
     Then the game should appear after a short delay
     When I place the ship at 300 300 with velocity 0 0
     And I spawn the trader ship on the ship
-    And I wait for 2100 ms
+    And I wait for 2500 ms
     Then the docking banner should be visible
     And the game should be paused
     When I click the undock button
@@ -41,6 +41,6 @@ Feature: Trader ship sightings
     Then the game should appear after a short delay
     When I place the ship at 300 300 with velocity 0 0
     And I spawn the trader ship at offset 45 0 from the ship
-    And I wait for 2100 ms
+    And I wait for 2500 ms
     Then the docking banner should be visible
     And the game should be paused

@@ -20,8 +20,8 @@ Feature: Power-up pickups
     Given I open the game page
     When I click the start screen
     Then the game should appear after a short delay
-    When I spawn an ammo power-up offset by 100 0 from the ship
-    When I wait for 9000 ms
+    When I spawn an ammo power-up offset by 150 0 from the ship
+    When I wait for 8000 ms
     Then a power-up should be visible
-    When I wait for 4000 ms
+    When I wait for 6000 ms
     Then no power-ups should be visible

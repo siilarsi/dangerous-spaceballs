@@ -88,6 +88,7 @@
     const game = new Phaser.Game(config);
     document.getElementById('fuel-container').style.display = 'block';
     document.getElementById('ammo-container').style.display = 'block';
+    document.getElementById('reload-indicator').style.display = 'block';
     document.getElementById('credits-container').style.display = 'block';
     document.getElementById('score-container').style.display = 'block';
     document.getElementById('legend').style.display = 'block';
