@@ -205,6 +205,20 @@ Then('no orbs should be visible', async () => {
   }
 });
 
+Then('there should be {int} orbs', async expected => {
+  const count = await ctx.page.evaluate(() => window.gameScene.orbs.length);
+  if (count !== expected) {
+    throw new Error(`Expected ${expected} orbs but found ${count}`);
+  }
+});
+
+Then('there should be at least {int} orbs', async min => {
+  const count = await ctx.page.evaluate(() => window.gameScene.orbs.length);
+  if (count < min) {
+    throw new Error(`Expected at least ${min} orbs but found ${count}`);
+  }
+});
+
 When('I place the ship at {int} {int} with velocity {int} {int}', async (x, y, vx, vy) => {
   await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.ship);
   await ctx.page.evaluate(({ x, y, vx, vy }) => {

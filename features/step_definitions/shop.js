@@ -60,7 +60,7 @@ Then('the shop should list at most {int} upgrades', async max => {
   }
 });
 
-Then('the shop overlay width should be at least {int}px', async min => {
+Then('the shop overlay width should be at least {int} px', async min => {
   const width = await ctx.page.$eval('#shop-overlay', el => parseInt(getComputedStyle(el).width));
   if (width < min) {
     throw new Error(`Expected width at least ${min} but got ${width}`);

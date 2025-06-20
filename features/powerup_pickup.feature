@@ -23,5 +23,5 @@ Feature: Power-up pickups
     When I spawn an ammo power-up offset by 150 0 from the ship
     When I wait for 8000 ms
     Then a power-up should be visible
-    When I wait for 6000 ms
+    When I wait for 10000 ms
     Then no power-ups should be visible

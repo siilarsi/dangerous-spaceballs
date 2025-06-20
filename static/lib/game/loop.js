@@ -190,14 +190,9 @@
             o.vx *= 1.2;
             o.vy *= 1.2;
         }
-        this.spawnOrb(0x0000ff, time);
-        this.showLevelBanner(this.level);
-    }
-
-    if (time > this.nextOrbSpawn) {
         const color = Math.random() < 0.5 ? 0xff0000 : 0x0000ff;
         this.spawnOrb(color, time);
-        this.nextOrbSpawn = time + this.orbSpawnRate;
+        this.showLevelBanner(this.level);
     }
 
     for (let i = this.orbs.length - 1; i >= 0; i--) {
