@@ -109,6 +109,12 @@ body, html {
     margin-bottom: 4px;
 }
 
+#inventory-panel li.highlight {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 2px 4px;
+}
+
 #inventory-panel li::before {
     margin-right: 4px;
 }

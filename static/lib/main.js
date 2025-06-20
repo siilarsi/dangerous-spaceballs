@@ -18,7 +18,7 @@
             shieldDuration: 0
         };
 
-        function updateInventoryPanel() {
+        function getCurrentStats() {
             let fuel = window.baseStats.maxFuel;
             let ammo = window.baseStats.ammo;
             let thrust = window.baseStats.boostThrust;
@@ -26,10 +26,45 @@
             const active = new Set([...window.permanentUpgrades, ...window.sessionUpgrades]);
             if (active.has('extra_fuel')) fuel += 50;
             if (active.has('max_ammo')) ammo = 100;
-            document.getElementById('inv-fuel').textContent = fuel;
-            document.getElementById('inv-ammo').textContent = ammo;
-            document.getElementById('inv-thrust').textContent = thrust;
-            document.getElementById('inv-shield').textContent = shield;
+            return { fuel, ammo, thrust, shield };
+        }
+
+        function updateInventoryPanel(stats = getCurrentStats()) {
+            document.getElementById('inv-fuel').textContent = stats.fuel;
+            document.getElementById('inv-ammo').textContent = stats.ammo;
+            document.getElementById('inv-thrust').textContent = stats.thrust;
+            document.getElementById('inv-shield').textContent = stats.shield;
+        }
+
+        function clearPreview() {
+            document.querySelectorAll('#inventory-panel li').forEach(li => li.classList.remove('highlight'));
+            updateInventoryPanel();
+        }
+
+        function previewUpgrade(item) {
+            clearPreview();
+            const current = getCurrentStats();
+            const preview = { ...current };
+            let statKey;
+            if (item.id === 'extra_fuel') {
+                statKey = 'fuel';
+                preview.fuel += 50;
+            } else if (item.id === 'max_ammo') {
+                statKey = 'ammo';
+                preview.ammo = 100;
+            } else if (item.id === 'shield') {
+                statKey = 'shield';
+                preview.shield = 1;
+            } else {
+                return;
+            }
+            updateInventoryPanel(preview);
+            const li = document.querySelector(`#inventory-panel li.${statKey}`);
+            if (li) {
+                li.classList.add('highlight');
+                const span = li.querySelector('span');
+                span.textContent = `${current[statKey]} → ${preview[statKey]}`;
+            }
         }
 
         updateInventoryPanel();
@@ -97,6 +132,11 @@
                 btn.className = 'buy-btn';
                 btn.textContent = 'Buy';
                 btn.onclick = () => purchase(item);
+
+                div.onmouseenter = () => previewUpgrade(item);
+                div.onmouseleave = () => clearPreview();
+                btn.onfocus = () => previewUpgrade(item);
+                btn.onblur = () => clearPreview();
 
                 div.appendChild(icon);
                 div.appendChild(info);
