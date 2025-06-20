@@ -70,6 +70,7 @@
       if(item.stock) item.stock -= 1;
       renderShop();
       updateInventoryPanel();
+      clearPreview();
     }
   }
 

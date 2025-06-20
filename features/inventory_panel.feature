@@ -26,3 +26,11 @@ Feature: Inventory panel
     Then the inventory stat "Fuel Capacity" should be "250"
     And the inventory stat "Ammo Limit" should be "100"
     And the inventory stat "Shield Duration" should be "1"
+
+  Scenario: Stats update immediately after buying while previewing
+    Given I open the game page
+    And I have 10 credits
+    When I open the shop tab
+    And I hover over the upgrade "Extra Starting Fuel"
+    And I click buy on the upgrade "Extra Starting Fuel"
+    Then the inventory stat "Fuel Capacity" should be "250"
