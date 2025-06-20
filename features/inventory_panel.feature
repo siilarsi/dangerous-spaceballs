@@ -17,3 +17,8 @@ Feature: Inventory panel
     And the inventory stat icon for "Boost Thrust" should be "🚀"
     And the inventory stat icon for "Shield Duration" should be "🛡️"
 
+  Scenario: No investment totals displayed
+    Given I open the game page
+    Then the inventory panel should be visible
+    And the inventory panel should not show investment totals
+
