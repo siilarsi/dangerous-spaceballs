@@ -14,6 +14,10 @@
 
   updateInventoryPanel();
 
+  const resetBtn = document.getElementById('reset-progress');
+  const resetWarning = document.getElementById('reset-warning');
+  let confirmReset = false;
+
   function resetProgress(){
     storage.resetAll();
     window.totalCredits = 0;
@@ -22,6 +26,17 @@
     document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => { el.textContent = 0; });
     document.getElementById('highscore-value').textContent = 0;
     updateInventoryPanel();
+  }
+
+  function handleResetClick(){
+    if(!confirmReset){
+      confirmReset = true;
+      resetWarning.style.display = 'block';
+      return;
+    }
+    resetWarning.style.display = 'none';
+    confirmReset = false;
+    resetProgress();
   }
 
   const gameOverBox = document.getElementById('game-over');
@@ -61,9 +76,12 @@
     });
   }
 
-  document.getElementById('reset-progress').addEventListener('click', resetProgress);
+  resetBtn.addEventListener('click', handleResetClick);
 
   document.getElementById('start-screen').addEventListener('click', function(){
+    resetBtn.style.display = 'none';
+    resetWarning.style.display = 'none';
+    confirmReset = false;
     document.getElementById('start-screen').style.display = 'none';
     const promo = document.getElementById('promo-animation');
     promo.style.display = 'flex';
