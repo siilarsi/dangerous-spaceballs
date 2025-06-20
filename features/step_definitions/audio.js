@@ -31,3 +31,25 @@ Then('gameplay music should be paused', async () => {
     throw new Error('Music was not paused');
   }
 });
+
+When('I monitor the bad hit sound', async () => {
+  await ctx.page.waitForFunction(() => window.sfx && window.sfx.bad);
+  await ctx.page.evaluate(() => {
+    const audio = window.sfx.bad;
+    if (audio.__monitored) return;
+    window.__badSoundPlayed = false;
+    const orig = audio.play.bind(audio);
+    audio.play = () => {
+      window.__badSoundPlayed = true;
+      return orig().catch(() => {});
+    };
+    audio.__monitored = true;
+  });
+});
+
+Then('the bad hit sound should play', async () => {
+  const played = await ctx.page.evaluate(() => window.__badSoundPlayed);
+  if (!played) {
+    throw new Error('Bad hit sound did not play');
+  }
+});

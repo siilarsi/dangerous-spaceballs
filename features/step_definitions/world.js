@@ -190,6 +190,11 @@ When('I spawn a stationary red orb offset by {int} {int} from the ship', async (
   await new Promise(r => setTimeout(r, 100));
 });
 
+Then('no orbs should be visible', async () => {
+  const count = await ctx.page.evaluate(() => window.gameScene.orbs.length);
+  if (count !== 0) {
+    throw new Error('Orb still visible');
+
 When('I place the ship at {int} {int} with velocity {int} {int}', async (x, y, vx, vy) => {
   await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.ship);
   await ctx.page.evaluate(({ x, y, vx, vy }) => {
