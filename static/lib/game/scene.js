@@ -9,25 +9,18 @@
     this.velocity = new Phaser.Math.Vector2(0, 0);
     this.isBoosting = false;
     this.isFiring = false;
-    this.maxFuel = window.baseStats.maxFuel;
-    this.fuel = this.maxFuel;
-    this.ammo = window.baseStats.ammo;
-    this.boostThrust = window.baseStats.boostThrust;
+    const stats = window.getCurrentStats();
+    this.maxFuel = stats.fuel;
+    this.fuel = stats.fuel;
+    this.ammo = stats.ammo;
+    this.boostThrust = stats.thrust;
     this.credits = 0;
-    this.fireRate = 100;
+    this.fireRate = stats.reload;
     this.lastFired = 0;
     this.bullets = [];
     this.gameOver = false;
 
-    const upgrades = [...window.permanentUpgrades, ...window.sessionUpgrades];
-    this.shield = upgrades.includes('shield');
-    const fuelUps = upgrades.filter(u => u === 'extra_fuel').length;
-    this.maxFuel += fuelUps * 50;
-    this.fuel = this.maxFuel;
-    const reloadUps = upgrades.filter(u => u === 'fast_reload').length;
-    this.fireRate = Math.max(20, this.fireRate - reloadUps * 10);
-    const ammoUps = upgrades.filter(u => u === 'max_ammo').length;
-    this.ammo += ammoUps * 50;
+    this.shield = stats.shield > 0;
 
     // Timer and power-ups
     this.timeRemaining = 60;
