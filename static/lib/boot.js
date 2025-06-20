@@ -79,6 +79,14 @@
       width: window.innerWidth,
       height: window.innerHeight,
       transparent: true,
+      physics: {
+        default: 'matter',
+        matter: {
+          gravity: { x: 0, y: 0 },
+          enableSleeping: false,
+          debug: false
+        }
+      },
       scene: {
         create: window.gameCreate,
         update: window.gameUpdate
