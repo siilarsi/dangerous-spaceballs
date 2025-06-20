@@ -4,6 +4,7 @@
 - If tests fail, update the code or tests so that they pass before committing.
 - If any of the tests are failing, investigate why they fail and try to fix the underlying issue.
 - Each new or modified feature must include a new BDD style test or an update to an existing one.
+- BDD tests should be optimized for efficiency. Avoid unnecessarily long runtimes and regularly evaluate them for speed improvements.
 
 ## Project overview
 
