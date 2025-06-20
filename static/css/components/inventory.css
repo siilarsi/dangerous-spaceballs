@@ -39,3 +39,10 @@
 #inventory-panel li.ammo::before { content: '🔫'; }
 #inventory-panel li.thrust::before { content: '🚀'; }
 #inventory-panel li.shield::before { content: '🛡️'; }
+#inventory-panel li.reload::before { content: '⚡'; }
+
+#inventory-panel li .invest {
+    font-size: 12px;
+    margin-left: 4px;
+    opacity: 0.8;
+}

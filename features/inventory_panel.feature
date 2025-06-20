@@ -4,6 +4,7 @@ Feature: Inventory panel
     Then the inventory panel should be visible
     And the inventory stat "Fuel Capacity" should be "200"
     And the inventory stat "Ammo Limit" should be "50"
+    And the inventory stat "Reload Time" should be "100"
     And the inventory stat "Boost Thrust" should be "200"
     And the inventory stat "Shield Duration" should be "0"
 
@@ -12,6 +13,7 @@ Feature: Inventory panel
     Then the inventory panel should be visible
     And the inventory stat icon for "Fuel Capacity" should be "⛽"
     And the inventory stat icon for "Ammo Limit" should be "🔫"
+    And the inventory stat icon for "Reload Time" should be "⚡"
     And the inventory stat icon for "Boost Thrust" should be "🚀"
     And the inventory stat icon for "Shield Duration" should be "🛡️"
 
@@ -43,3 +45,13 @@ Feature: Inventory panel
     And I buy the upgrade "Increase Max Ammo"
     When I reload the page
     Then the inventory stat "Ammo Limit" should be "150"
+
+  Scenario: Credits spent are displayed for each stat
+    Given I open the game page
+    And I have 8 credits
+    When I open the shop tab
+    And I buy the upgrade "Increase Max Ammo"
+    And I buy the upgrade "Extra Starting Fuel"
+    When I reload the page
+    Then the inventory investment for "Ammo Limit" should be "5"
+    And the inventory investment for "Fuel Capacity" should be "3"
