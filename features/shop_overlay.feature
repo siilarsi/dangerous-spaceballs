@@ -9,6 +9,7 @@ Feature: Shop overlay
     And I wait for 2100 ms
     Then the docking banner should be visible
     And the shop overlay should be visible
+    And the shop overlay width should be at least 320 px
     And the shop credits should be 0
     And the shop stat "Ammo Limit" should be "50"
     When I click the undock button
