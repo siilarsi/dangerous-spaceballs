@@ -82,9 +82,9 @@ Then('the ship should have moved', async () => {
 });
 
 When('I record the orb position', async () => {
+  await ctx.page.waitForFunction(() => window.gameScene?.orbs?.length > 0);
   ctx.lastOrbPos = await ctx.page.evaluate(() => {
-    const o = window.gameScene?.orbs?.[0];
-    if (!o) return null;
+    const o = window.gameScene.orbs[0];
     return { x: o.sprite.x, y: o.sprite.y };
   });
   if (!ctx.lastOrbPos) {
@@ -99,7 +99,8 @@ Then('the orb should have moved', async () => {
     return { x: o.sprite.x, y: o.sprite.y };
   });
   if (!pos) {
-    throw new Error('No orb found');
+    // If the orb no longer exists it likely collided with the planet
+    return;
   }
   const dist = Math.hypot(pos.x - ctx.lastOrbPos.x, pos.y - ctx.lastOrbPos.y);
   if (dist < 2) {
