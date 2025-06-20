@@ -14,3 +14,13 @@ Feature: Inventory panel
     And the inventory stat icon for "Ammo Limit" should be "🔫"
     And the inventory stat icon for "Boost Thrust" should be "🚀"
     And the inventory stat icon for "Shield Duration" should be "🛡️"
+
+  Scenario: Purchased upgrades update stats after returning
+    Given I open the game page
+    And I have 10 credits
+    When I open the shop tab
+    And I buy the upgrade "Increase Max Ammo"
+    And I buy the upgrade "Extra Starting Fuel"
+    When I reload the page
+    Then the inventory stat "Fuel Capacity" should be "250"
+    And the inventory stat "Ammo Limit" should be "100"
