@@ -19,18 +19,15 @@
     this.bullets = [];
     this.gameOver = false;
 
-    const active = new Set([...window.permanentUpgrades, ...window.sessionUpgrades]);
-    this.shield = active.has('shield');
-    if (active.has('extra_fuel')) {
-        this.maxFuel += 50;
-        this.fuel = this.maxFuel;
-    }
-    if (active.has('fast_reload')) {
-        this.fireRate = 50;
-    }
-    if (active.has('max_ammo')) {
-        this.ammo = 100;
-    }
+    const upgrades = [...window.permanentUpgrades, ...window.sessionUpgrades];
+    this.shield = upgrades.includes('shield');
+    const fuelUps = upgrades.filter(u => u === 'extra_fuel').length;
+    this.maxFuel += fuelUps * 50;
+    this.fuel = this.maxFuel;
+    const reloadUps = upgrades.filter(u => u === 'fast_reload').length;
+    this.fireRate = Math.max(20, this.fireRate - reloadUps * 10);
+    const ammoUps = upgrades.filter(u => u === 'max_ammo').length;
+    this.ammo += ammoUps * 50;
 
     // Timer and power-ups
     this.timeRemaining = 60;

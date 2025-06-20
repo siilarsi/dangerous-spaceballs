@@ -34,3 +34,12 @@ Feature: Inventory panel
     And I hover over the upgrade "Extra Starting Fuel"
     And I click buy on the upgrade "Extra Starting Fuel"
     Then the inventory stat "Fuel Capacity" should be "250"
+
+  Scenario: Upgrades stack with multiple purchases
+    Given I open the game page
+    And I have 15 credits
+    When I open the shop tab
+    And I buy the upgrade "Increase Max Ammo"
+    And I buy the upgrade "Increase Max Ammo"
+    When I reload the page
+    Then the inventory stat "Ammo Limit" should be "150"

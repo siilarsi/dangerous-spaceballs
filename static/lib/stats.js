@@ -11,10 +11,12 @@
     let ammo = baseStats.ammo;
     let thrust = baseStats.boostThrust;
     let shield = baseStats.shieldDuration;
-    const active = new Set([...(window.permanentUpgrades||[]), ...(window.sessionUpgrades||[])]);
-    if(active.has('extra_fuel')) fuel += 50;
-    if(active.has('max_ammo')) ammo = 100;
-    if(active.has('shield')) shield = 1;
+    const active = [...(window.permanentUpgrades || []), ...(window.sessionUpgrades || [])];
+    for (const id of active) {
+      if (id === 'extra_fuel') fuel += 50;
+      else if (id === 'max_ammo') ammo += 50;
+      else if (id === 'shield') shield = 1;
+    }
     return {fuel, ammo, thrust, shield};
   }
 
@@ -40,7 +42,7 @@
       preview.fuel += 50;
     }else if(item.id === 'max_ammo'){
       statKey = 'ammo';
-      preview.ammo = 100;
+      preview.ammo += 50;
     }else if(item.id === 'shield'){
       statKey = 'shield';
       preview.shield = 1;
