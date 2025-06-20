@@ -67,13 +67,10 @@ Then('the inventory stat {string} should be highlighted', async label => {
   }
 });
 
-Then('the inventory investment for {string} should be {string}', async (label, expected) => {
-  const actual = await ctx.page.evaluate(lbl => {
-    const items = Array.from(document.querySelectorAll('#inventory-panel li'));
-    const el = items.find(i => i.textContent.trim().toLowerCase().startsWith(lbl.toLowerCase()));
-    return el ? el.querySelector('.invest')?.textContent.trim() : null;
-  }, label);
-  if (actual !== expected) {
-    throw new Error(`Expected investment ${expected} but got ${actual}`);
+Then('the inventory panel should not show investment totals', async () => {
+  const count = await ctx.page.$$eval('#inventory-panel .invest', els => els.length);
+  if (count !== 0) {
+    throw new Error('Investment totals should not be visible');
   }
 });
+
