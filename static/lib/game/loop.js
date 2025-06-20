@@ -24,34 +24,6 @@
     const noseAngle = this.ship.rotation - Math.PI / 2;
     const powerScale = Math.max(0.5, 1 - (this.level - 1) * 0.05);
 
-    // Countdown timer
-    this.timeRemaining -= deltaSeconds;
-    if (this.timeRemaining <= 0) {
-        clearInterval(this.urgentInterval);
-        if (this.urgencyOverlay) this.urgencyOverlay.style.opacity = '0';
-        sfx.timeout.currentTime = 0;
-        sfx.timeout.play().catch(() => {});
-        window.currentGameplayMusic?.pause();
-        sfx.boost.pause();
-        sfx.boost.currentTime = 0;
-        showGameOver('Game Over! Your time ran out.');
-        this.gameOver = true;
-        return;
-    }
-    if (this.timeRemaining <= 10) {
-        if (!this.urgentStarted) {
-            this.urgentStarted = true;
-            this.urgentInterval = setInterval(playTick, 2000);
-        }
-        const intensity = 1 - Math.max(0, this.timeRemaining) / 10;
-        if (this.urgencyOverlay) {
-            this.urgencyOverlay.style.opacity = (intensity * 0.7).toFixed(2);
-        }
-    } else if (this.urgentStarted) {
-        this.urgentStarted = false;
-        clearInterval(this.urgentInterval);
-        if (this.urgencyOverlay) this.urgencyOverlay.style.opacity = '0';
-    }
 
     if (this.isFiring && this.ammo > 0 && time > this.lastFired + this.fireRate) {
         const angle = Phaser.Math.Angle.Between(this.ship.x, this.ship.y, this.reticle.x, this.reticle.y);
@@ -155,10 +127,9 @@
         const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
         const x = center.x + Math.cos(angle) * radius;
         const y = center.y + Math.sin(angle) * radius;
-        const type = Phaser.Math.RND.pick(['ammo', 'fuel', 'time']);
+        const type = Phaser.Math.RND.pick(['ammo', 'fuel']);
         let color = 0xffff00;
         if (type === 'fuel') color = 0xffa500;
-        if (type === 'time') color = 0x00ff00;
         const power = this.add.container(x, y);
         if (type === 'ammo') {
             const v = this.add.rectangle(0, 0, 6, 18, color);
@@ -168,12 +139,6 @@
         if (type === 'fuel') {
             const tri = this.add.triangle(0, 0, -7, 7, 7, 7, 0, -7, color);
             power.add(tri);
-        }
-        if (type === 'time') {
-            const circle = this.add.circle(0, 0, 8, color);
-            const hand = this.add.line(0, 0, 0, 0, 0, -6, 0xffffff);
-            hand.setLineWidth(2);
-            power.add([circle, hand]);
         }
         this.tweens.add({ targets: power, scale: 1.1, yoyo: true, repeat: -1, duration: 800 });
         power.setAlpha(1);
@@ -246,8 +211,6 @@
                 o.sprite.destroy();
                 this.orbs.splice(i, 1);
             } else {
-                clearInterval(this.urgentInterval);
-                if (this.urgencyOverlay) this.urgencyOverlay.style.opacity = '0';
                 sfx.crash.currentTime = 0;
                 sfx.crash.play().catch(() => {});
                 sfx.explosion.currentTime = 0;
@@ -292,11 +255,6 @@
                 const amt = Math.round(25 * powerScale);
                 this.fuel = Math.min(this.maxFuel, this.fuel + amt);
                 label = `+${amt} Fuel`;
-            }
-            if (p.type === 'time') {
-                const amt = Math.round(15 * powerScale);
-                this.timeRemaining += amt;
-                label = `+${amt} Time`;
             }
             const txt = this.add.text(p.sprite.x, p.sprite.y, label, { font: '16px Arial', color: '#ffffff' });
             txt.setOrigin(0.5);
@@ -383,8 +341,6 @@
                 window.sessionUpgrades = window.sessionUpgrades.filter(u => u !== 'shield');
                 sessionStorage.setItem('sessionUpgrades', JSON.stringify(window.sessionUpgrades));
             } else {
-                clearInterval(this.urgentInterval);
-                if (this.urgencyOverlay) this.urgencyOverlay.style.opacity = '0';
                 sfx.crash.currentTime = 0;
                 sfx.crash.play().catch(() => {});
                 window.currentGameplayMusic?.pause();
@@ -423,7 +379,6 @@
     document.getElementById('score').textContent = this.score;
     document.getElementById('streak').textContent = this.streak;
     document.getElementById('credits').textContent = this.credits;
-    document.getElementById('time-remaining').textContent = Math.ceil(this.timeRemaining);
     const cd = document.getElementById('reload-indicator');
     const fill = cd.querySelector('.fill');
     const prog = Math.min(1, (time - this.lastFired) / this.fireRate);

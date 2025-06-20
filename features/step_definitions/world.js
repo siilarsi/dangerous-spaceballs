@@ -25,8 +25,7 @@ Then('the legend icons should match power-up graphics', async () => {
   );
   const expected = [
     { shape: 'cross', color: '#ffff00' },
-    { shape: 'triangle', color: '#ffa500' },
-    { shape: 'circle', color: '#00ff00' }
+    { shape: 'triangle', color: '#ffa500' }
   ];
   if (
     icons.length !== expected.length ||

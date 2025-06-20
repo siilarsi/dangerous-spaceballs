@@ -24,16 +24,12 @@
 
     this.shield = stats.shield > 0;
 
-    // Timer and power-ups
-    this.timeRemaining = 60;
+    // Power-ups
     this.powerUps = [];
     this.floatingTexts = [];
     this.nextPowerUpSpawn = 5000;
     this.powerUpSpawnRate = 8000; // milliseconds
     this.powerUpFadeDuration = 9500;
-    this.urgentStarted = false;
-    this.urgentInterval = null;
-    this.urgencyOverlay = document.getElementById('urgency-overlay');
 
     // Orb management
     this.orbs = [];
@@ -161,7 +157,6 @@
     this.streak = 0;
     document.getElementById('score').textContent = this.score;
     document.getElementById('streak').textContent = this.streak;
-    document.getElementById('time-remaining').textContent = Math.ceil(this.timeRemaining);
 
     this.input.mouse.disableContextMenu();
 
