@@ -124,10 +124,9 @@
             this.streak += 1;
             this.score += 10 * this.streak;
             this.credits += 1;
-            window.totalCredits += 1;
-            localStorage.setItem('credits', window.totalCredits);
+            window.runCredits += 1;
             document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => {
-                el.textContent = window.totalCredits;
+                el.textContent = window.runCredits;
             });
             if (this.streak % 5 === 0) {
                 const txt = this.add.text(x, y, `Streak ${this.streak}!`, { font: '20px Arial', color: '#ff00ff' });

@@ -26,8 +26,7 @@ Then('each upgrade should appear as a card', async () => {
 
 Given('I have {int} credits', async count => {
   await ctx.page.evaluate(c => {
-    localStorage.setItem('credits', c);
-    window.totalCredits = c;
+    window.runCredits = c;
     document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => { el.textContent = c; });
   }, count);
 });

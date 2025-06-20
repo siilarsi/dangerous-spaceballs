@@ -12,11 +12,10 @@
     if(item && currentInventory && currentInventory[item.id] !== undefined){
       if(currentInventory[item.id] <= 0) return false;
     }
-    if(window.totalCredits < item.cost) return false;
-    window.totalCredits -= item.cost;
-    storage.setCredits(window.totalCredits);
+    if(window.runCredits < item.cost) return false;
+    window.runCredits -= item.cost;
     document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => {
-      el.textContent = window.totalCredits;
+      el.textContent = window.runCredits;
     });
     window.permanentUpgrades.push(item.id);
     storage.setPermanentUpgrades(window.permanentUpgrades);
