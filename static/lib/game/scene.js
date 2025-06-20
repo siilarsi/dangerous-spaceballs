@@ -13,11 +13,18 @@
     this.ship.setOrigin(0.5, 0.5);
     const shipW = this.ship.width;
     const shipH = this.ship.height;
-    const R = Math.round(shipW / 2);
-    const offsetX = 0;
-    const offsetY = -shipH / 2;
+    let maxDistSq = 0;
+    for (let i = 0; i < shipPoints.length; i += 2) {
+        const x = shipPoints[i];
+        const y = shipPoints[i + 1];
+        const d = x * x + y * y;
+        if (d > maxDistSq) {
+            maxDistSq = d;
+        }
+    }
+    const R = Math.ceil(Math.sqrt(maxDistSq));
     this.shipRadius = R;
-    this.shipBodyOffset = new Phaser.Math.Vector2(offsetX, offsetY);
+    this.shipBodyOffset = new Phaser.Math.Vector2(0, 0);
 
     this.velocity = new Phaser.Math.Vector2(0, 0);
     this.isBoosting = false;
