@@ -19,19 +19,18 @@ Then('the legend should be visible', async () => {
 Then('the legend icons should match power-up graphics', async () => {
   const icons = await ctx.page.$$eval('#legend .legend-dot', els =>
     els.map(el => ({
-      base: getComputedStyle(el).backgroundColor,
-      lid: getComputedStyle(el, '::after').backgroundColor
+      shape: el.dataset.shape,
+      color: getComputedStyle(el).getPropertyValue('--color').trim()
     }))
   );
   const expected = [
-    'rgb(255, 255, 0)',
-    'rgb(255, 165, 0)',
-    'rgb(0, 255, 0)'
+    { shape: 'cross', color: '#ffff00' },
+    { shape: 'triangle', color: '#ffa500' },
+    { shape: 'circle', color: '#00ff00' }
   ];
-  const baseColor = 'rgb(139, 69, 19)';
   if (
-    icons.length !== 3 ||
-    icons.some((ic, i) => ic.base !== baseColor || ic.lid !== expected[i])
+    icons.length !== expected.length ||
+    icons.some((ic, i) => ic.shape !== expected[i].shape || ic.color !== expected[i].color)
   ) {
     throw new Error('Legend icons do not match power-up graphics');
   }
@@ -50,11 +49,12 @@ When('I spawn an ammo power-up on the ship', async () => {
   await ctx.page.evaluate(() => {
     const gs = window.gameScene;
     const time = gs.time.now;
-    const chest = gs.add.container(gs.ship.x, gs.ship.y);
-    const base = gs.add.rectangle(0, 4, 24, 13, 0x8b4513);
-    const lid = gs.add.rectangle(0, -5, 24, 7, 0xffff00);
-    chest.add([base, lid]);
-    gs.powerUps.push({ sprite: chest, type: 'ammo', spawnTime: time });
+    const power = gs.add.container(gs.ship.x, gs.ship.y);
+    const v = gs.add.rectangle(0, 0, 6, 18, 0xffff00);
+    const h = gs.add.rectangle(0, 0, 18, 6, 0xffff00);
+    power.add([v, h]);
+    gs.tweens.add({ targets: power, scale: 1.1, yoyo: true, repeat: -1, duration: 800 });
+    gs.powerUps.push({ sprite: power, type: 'ammo', spawnTime: time });
     gs.nextPowerUpSpawn = Infinity;
   });
   await ctx.page.waitForTimeout(200);
@@ -65,11 +65,12 @@ When('I spawn an ammo power-up offset by {int} {int} from the ship', async (dx, 
   await ctx.page.evaluate(({ dx, dy }) => {
     const gs = window.gameScene;
     const time = gs.time.now;
-    const chest = gs.add.container(gs.ship.x + dx, gs.ship.y + dy);
-    const base = gs.add.rectangle(0, 4, 24, 13, 0x8b4513);
-    const lid = gs.add.rectangle(0, -5, 24, 7, 0xffff00);
-    chest.add([base, lid]);
-    gs.powerUps.push({ sprite: chest, type: 'ammo', spawnTime: time });
+    const power = gs.add.container(gs.ship.x + dx, gs.ship.y + dy);
+    const v = gs.add.rectangle(0, 0, 6, 18, 0xffff00);
+    const h = gs.add.rectangle(0, 0, 18, 6, 0xffff00);
+    power.add([v, h]);
+    gs.tweens.add({ targets: power, scale: 1.1, yoyo: true, repeat: -1, duration: 800 });
+    gs.powerUps.push({ sprite: power, type: 'ammo', spawnTime: time });
     gs.nextPowerUpSpawn = Infinity;
   }, { dx, dy });
   await ctx.page.waitForTimeout(200);
@@ -194,6 +195,8 @@ Then('no orbs should be visible', async () => {
   const count = await ctx.page.evaluate(() => window.gameScene.orbs.length);
   if (count !== 0) {
     throw new Error('Orb still visible');
+  }
+});
 
 When('I place the ship at {int} {int} with velocity {int} {int}', async (x, y, vx, vy) => {
   await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.ship);

@@ -152,12 +152,25 @@
         let color = 0xffff00;
         if (type === 'fuel') color = 0xffa500;
         if (type === 'time') color = 0x00ff00;
-        const chest = this.add.container(x, y);
-        const base = this.add.rectangle(0, 4, 24, 13, 0x8b4513);
-        const lid = this.add.rectangle(0, -5, 24, 7, color);
-        chest.add([base, lid]);
-        chest.setAlpha(1);
-        this.powerUps.push({ sprite: chest, type: type, spawnTime: time });
+        const power = this.add.container(x, y);
+        if (type === 'ammo') {
+            const v = this.add.rectangle(0, 0, 6, 18, color);
+            const h = this.add.rectangle(0, 0, 18, 6, color);
+            power.add([v, h]);
+        }
+        if (type === 'fuel') {
+            const tri = this.add.triangle(0, 0, -7, 7, 7, 7, 0, -7, color);
+            power.add(tri);
+        }
+        if (type === 'time') {
+            const circle = this.add.circle(0, 0, 8, color);
+            const hand = this.add.line(0, 0, 0, 0, 0, -6, 0xffffff);
+            hand.setLineWidth(2);
+            power.add([circle, hand]);
+        }
+        this.tweens.add({ targets: power, scale: 1.1, yoyo: true, repeat: -1, duration: 800 });
+        power.setAlpha(1);
+        this.powerUps.push({ sprite: power, type: type, spawnTime: time });
         this.nextPowerUpSpawn = time + this.powerUpSpawnRate;
     }
 
