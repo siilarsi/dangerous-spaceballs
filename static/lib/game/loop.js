@@ -357,6 +357,7 @@
             this.traderShip.destroy();
             this.traderShip = null;
             this.nextTraderSpawn = time + this.traderSpawnInterval;
+            window.shop.render(null);
         }
     }
 

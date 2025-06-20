@@ -120,6 +120,14 @@
     padding: 2px 6px;
 }
 
+#shop-overlay .shop-item.sold-out {
+    opacity: 0.5;
+}
+
+#shop-overlay .shop-item.sold-out .buy-btn {
+    cursor: default;
+}
+
 #shop-coming {
     margin-top: 10px;
     font-style: italic;

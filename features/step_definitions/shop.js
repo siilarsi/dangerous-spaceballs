@@ -32,3 +32,30 @@ Then('the shop stat {string} should be {string}', async (label, expected) => {
     throw new Error(`Expected ${label} ${expected} but got ${actual}`);
   }
 });
+
+Then('the upgrade {string} should show Sold Out', async name => {
+  const state = await ctx.page.$$eval('#shop-overlay .shop-item', (items, n) => {
+    const el = items.find(i => i.querySelector('.name').textContent.trim() === n);
+    return el ? el.classList.contains('sold-out') && el.querySelector('.buy-btn').textContent.includes('Sold') : false;
+  }, name);
+  if(!state){
+    throw new Error('Sold out state not shown');
+  }
+});
+
+Then('the upgrade {string} should not show Sold Out', async name => {
+  const state = await ctx.page.$$eval('#shop-overlay .shop-item', (items, n) => {
+    const el = items.find(i => i.querySelector('.name').textContent.trim() === n);
+    return el ? el.classList.contains('sold-out') : false;
+  }, name);
+  if(state){
+    throw new Error('Unexpected sold out state');
+  }
+});
+
+Then('the shop should list at most {int} upgrades', async max => {
+  const count = await ctx.page.$$eval('#shop-overlay .shop-item', items => items.length);
+  if(count > max){
+    throw new Error(`Expected at most ${max} items but got ${count}`);
+  }
+});
