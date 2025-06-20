@@ -406,7 +406,8 @@
 
     if (this.debugGraphics) {
         this.debugGraphics.clear();
-        if (window.debugHitboxes) {
+        if (window.debugHitboxes && window.debugHitboxes.active) {
+            window.debugHitboxes.ship = { x: shipHitX, y: shipHitY, r: this.shipRadius };
             this.debugGraphics.lineStyle(1, 0xff00ff, 0.6);
             this.debugGraphics.strokeCircle(shipHitX, shipHitY, this.shipRadius);
             for (const p of this.planets) {

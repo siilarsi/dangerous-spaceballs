@@ -125,9 +125,17 @@ Then('the game should not be over', async () => {
 
 Then('the debug overlay should be active', async () => {
   await ctx.page.waitForFunction(() => window.gameScene);
-  const active = await ctx.page.evaluate(() => window.debugHitboxes === true);
+  const active = await ctx.page.evaluate(() => window.debugHitboxes?.active === true);
   if (!active) {
     throw new Error('Debug overlay not active');
+  }
+});
+
+Then('the ship debug data should include circle info', async () => {
+  await ctx.page.waitForFunction(() => window.debugHitboxes?.ship);
+  const data = await ctx.page.evaluate(() => window.debugHitboxes.ship);
+  if (!data || typeof data.x !== 'number' || typeof data.y !== 'number' || typeof data.r !== 'number') {
+    throw new Error('Ship debug data missing');
   }
 });
 
