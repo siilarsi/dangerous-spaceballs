@@ -211,6 +211,8 @@
             const dxp = o.sprite.x - p.sprite.x;
             const dyp = o.sprite.y - p.sprite.y;
             if (dxp * dxp + dyp * dyp <= (radius * o.sprite.scaleX + p.radius) * (radius * o.sprite.scaleX + p.radius)) {
+                sfx.bad.currentTime = 0;
+                sfx.bad.play().catch(() => {});
                 o.sprite.destroy();
                 this.orbs.splice(i, 1);
                 break;
