@@ -82,3 +82,22 @@ Then('the ship should face the reticle', async () => {
     return diff < 0.2;
   }, ctx.lastPointer);
 });
+
+When('I set the ship boost thrust to {int}', async thrust => {
+  await ctx.page.waitForFunction(() => window.gameScene);
+  await ctx.page.evaluate(t => { window.gameScene.boostThrust = t; }, thrust);
+});
+
+Then('the flame scale should be {float}', async expected => {
+  const scale = await ctx.page.evaluate(() => window.gameScene.flame.scaleY);
+  if (Math.abs(scale - expected) > 0.1) {
+    throw new Error(`Flame scale ${scale} not close to ${expected}`);
+  }
+});
+
+Then('the cooldown indicator should be visible', async () => {
+  const display = await ctx.page.$eval('#reload-indicator', el => getComputedStyle(el).display);
+  if (display === 'none') {
+    throw new Error('Cooldown indicator not visible');
+  }
+});

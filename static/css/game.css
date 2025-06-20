@@ -32,6 +32,20 @@
     font-family: Arial, sans-serif;
     display: none;
 }
+#reload-indicator {
+    position: absolute;
+    top: 28px;
+    right: 10px;
+    width: 100px;
+    height: 6px;
+    border: 1px solid #fff;
+    display: none;
+}
+#reload-indicator .fill {
+    height: 100%;
+    width: 0;
+    background: yellow;
+}
 #credits-container {
     position: absolute;
     top: 50px;

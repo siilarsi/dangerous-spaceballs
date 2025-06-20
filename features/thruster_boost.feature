@@ -26,3 +26,15 @@ Feature: Thruster Boost
     When I hold the right mouse button for 500 ms
     When I release the right mouse button
     Then the ship speed should be below 150
+
+  Scenario: Flame scales with thrust
+    Given I open the game page
+    When I click the start screen
+    Then the game should appear after a short delay
+    When I hold the right mouse button for 300 ms
+    Then the flame scale should be 1
+    When I release the right mouse button
+    When I set the ship boost thrust to 400
+    When I hold the right mouse button for 300 ms
+    Then the flame scale should be 2
+    When I release the right mouse button
