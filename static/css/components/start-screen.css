@@ -7,7 +7,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url('../images/promo.webp') center center / cover no-repeat;
+    background: url('../../images/promo.webp') center center / cover no-repeat;
 }
 #highscore-display {
     position: absolute;
