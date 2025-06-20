@@ -6,5 +6,6 @@ module.exports = {
   lastPointer: { x: 0, y: 0 },
   initialAmmo: 0,
   lastOrbPos: null,
-  lastTraderPos: null
+  lastTraderPos: null,
+  lastPowerupPos: null
 };

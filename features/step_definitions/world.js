@@ -54,7 +54,7 @@ When('I spawn an ammo power-up on the ship', async () => {
     const h = gs.add.rectangle(0, 0, 18, 6, 0xffff00);
     power.add([v, h]);
     gs.tweens.add({ targets: power, scale: 1.1, yoyo: true, repeat: -1, duration: 800 });
-    gs.powerUps.push({ sprite: power, type: 'ammo', spawnTime: time });
+    gs.powerUps.push({ sprite: power, type: 'ammo', spawnTime: time, angle: 0, orbiting: false });
     gs.nextPowerUpSpawn = Infinity;
   });
   await ctx.page.waitForTimeout(200);
@@ -70,7 +70,7 @@ When('I spawn an ammo power-up offset by {int} {int} from the ship', async (dx, 
     const h = gs.add.rectangle(0, 0, 18, 6, 0xffff00);
     power.add([v, h]);
     gs.tweens.add({ targets: power, scale: 1.1, yoyo: true, repeat: -1, duration: 800 });
-    gs.powerUps.push({ sprite: power, type: 'ammo', spawnTime: time });
+    gs.powerUps.push({ sprite: power, type: 'ammo', spawnTime: time, angle: 0, orbiting: false });
     gs.nextPowerUpSpawn = Infinity;
   }, { dx, dy });
   await ctx.page.waitForTimeout(200);
@@ -296,4 +296,36 @@ Then('the docking banner should not be visible', async () => {
 
 When('I click the undock button', async () => {
   await ctx.page.click('#undock-btn');
+});
+
+When('I set the next power-up spawn to {int} ms', async ms => {
+  await ctx.page.waitForFunction(() => window.gameScene);
+  await ctx.page.evaluate(m => {
+    const gs = window.gameScene;
+    gs.nextPowerUpSpawn = gs.time.now + m;
+  }, ms);
+});
+
+When('I record the power-up position', async () => {
+  await ctx.page.waitForFunction(() => {
+    return window.gameScene && window.gameScene.powerUps.length > 0;
+  });
+  ctx.lastPowerupPos = await ctx.page.evaluate(() => {
+    const p = window.gameScene.powerUps[0];
+    return { x: p.sprite.x, y: p.sprite.y };
+  });
+});
+
+Then('the power-up should have moved', async () => {
+  await ctx.page.waitForFunction(() => {
+    return window.gameScene && window.gameScene.powerUps.length > 0;
+  });
+  const pos = await ctx.page.evaluate(() => {
+    const p = window.gameScene.powerUps[0];
+    return { x: p.sprite.x, y: p.sprite.y };
+  });
+  const dist = Math.hypot(pos.x - ctx.lastPowerupPos.x, pos.y - ctx.lastPowerupPos.y);
+  if (dist < 2) {
+    throw new Error('Power-up did not move');
+  }
 });

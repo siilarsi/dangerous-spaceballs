@@ -95,6 +95,12 @@
     const planet = this.add.circle(pos.x, pos.y, pr, 0x6666ff);
     this.planets.push({ sprite: planet, radius: pr, atmosphere });
 
+    // Power-up orbit parameters
+    this.powerUpOrbitCenter = planet;
+    this.powerUpOrbitRadius = pr + 60;
+    this.powerUpAngularSpeed = 0.25; // radians per second
+    this.powerUpOrbitDir = Math.random() < 0.5 ? 1 : -1;
+
     this.spawnOrb = (color, t) => {
         const x = Phaser.Math.Between(0, this.scale.width);
         const y = Phaser.Math.Between(0, this.scale.height);

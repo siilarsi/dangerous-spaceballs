@@ -147,8 +147,11 @@
     }
 
     if (time > this.nextPowerUpSpawn) {
-        const x = Phaser.Math.Between(20, this.scale.width - 20);
-        const y = Phaser.Math.Between(20, this.scale.height - 20);
+        const center = this.powerUpOrbitCenter || this.planets[0]?.sprite;
+        const radius = this.powerUpOrbitRadius || 180;
+        const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
+        const x = center.x + Math.cos(angle) * radius;
+        const y = center.y + Math.sin(angle) * radius;
         const type = Phaser.Math.RND.pick(['ammo', 'fuel', 'time']);
         let color = 0xffff00;
         if (type === 'fuel') color = 0xffa500;
@@ -171,7 +174,7 @@
         }
         this.tweens.add({ targets: power, scale: 1.1, yoyo: true, repeat: -1, duration: 800 });
         power.setAlpha(1);
-        this.powerUps.push({ sprite: power, type: type, spawnTime: time });
+        this.powerUps.push({ sprite: power, type: type, spawnTime: time, angle, orbiting: true });
         this.nextPowerUpSpawn = time + this.powerUpSpawnRate;
     }
 
@@ -263,6 +266,14 @@
 
     for (let i = this.powerUps.length - 1; i >= 0; i--) {
         const p = this.powerUps[i];
+        if (p.orbiting !== false) {
+            const center = this.powerUpOrbitCenter || this.planets[0]?.sprite;
+            const radius = this.powerUpOrbitRadius || 180;
+            p.angle += this.powerUpAngularSpeed * deltaSeconds * this.powerUpOrbitDir;
+            p.sprite.x = center.x + Math.cos(p.angle) * radius;
+            p.sprite.y = center.y + Math.sin(p.angle) * radius;
+        }
+
         const progress = (time - p.spawnTime) / this.powerUpFadeDuration;
         p.sprite.setAlpha(1 - progress);
         if (progress >= 1) {
