@@ -559,6 +559,13 @@ When('I buy the upgrade {string}', async name => {
   }, name);
 });
 
+When('I click buy on the upgrade {string}', async name => {
+  await page.$$eval('#shop-panel .shop-item', (items, n) => {
+    const el = items.find(i => i.querySelector('.name').textContent.trim() === n);
+    el.querySelector('.buy-btn').click();
+  }, name);
+});
+
 Then('my ammo should be {int}', async expected => {
   await page.waitForFunction(() => window.gameScene);
   const val = await page.evaluate(() => window.gameScene.ammo);
@@ -636,6 +643,13 @@ Then('the displayed credits should be {int}', async expected => {
   const val = await page.$eval('#start-credits-value', el => parseInt(el.textContent));
   if (val !== expected) {
     throw new Error(`Expected credits ${expected} but got ${val}`);
+  }
+});
+
+Then('the game should not be visible', async () => {
+  const display = await page.$eval('#game', el => getComputedStyle(el).display);
+  if (display !== 'none') {
+    throw new Error('Game should not be visible');
   }
 });
 

@@ -703,6 +703,9 @@
         document.getElementById('close-shop').addEventListener('click', () => {
             document.getElementById('shop-panel').style.display = 'none';
         });
+        document.getElementById('shop-panel').addEventListener('click', e => {
+            e.stopPropagation();
+        });
 
         document.getElementById('start-screen').addEventListener('click', function(e) {
             if (e.target.id === 'shop-tab' || e.target.closest('#shop-panel')) {
