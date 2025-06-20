@@ -438,6 +438,16 @@
     } else {
         cd.style.display = 'none';
     }
+    this.reticleCooldownProgress = prog;
+    this.reticleCooldown.clear();
+    if (prog < 1) {
+        this.reticleCooldown.fillStyle(0xffff00, 0.6);
+        this.reticleCooldown.slice(0, 0, 12, -Math.PI / 2, -Math.PI / 2 + prog * Math.PI * 2, false);
+        this.reticleCooldown.fillPath();
+        this.reticleCooldown.visible = true;
+    } else {
+        this.reticleCooldown.visible = false;
+    }
 }
   window.gameUpdate = update;
 })();

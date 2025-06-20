@@ -14,4 +14,5 @@ Feature: Laser firing
     Then the game should appear after a short delay
     When I hold the left mouse button for 100 ms
     Then the cooldown indicator should be visible
+    And the reticle cooldown should be active
     When I release the left mouse button

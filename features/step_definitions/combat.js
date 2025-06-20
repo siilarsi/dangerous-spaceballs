@@ -101,3 +101,10 @@ Then('the cooldown indicator should be visible', async () => {
     throw new Error('Cooldown indicator not visible');
   }
 });
+
+Then('the reticle cooldown should be active', async () => {
+  const prog = await ctx.page.evaluate(() => window.gameScene.reticleCooldownProgress);
+  if (prog === undefined || prog >= 1) {
+    throw new Error('Reticle cooldown not active');
+  }
+});
