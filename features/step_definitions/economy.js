@@ -43,8 +43,8 @@ When('I simulate hitting {int} red orbs', async count => {
 
 When('I buy the upgrade {string}', async name => {
   await ctx.page.evaluate(n => {
-    const item = shopItems.find(i => i.name === n);
-    if (item) purchase(item);
+    const item = window.shop.items.find(i => i.name === n);
+    if (item) window.shop.purchase(item);
   }, name);
 });
 

@@ -14,6 +14,7 @@
     const active = new Set([...(window.permanentUpgrades||[]), ...(window.sessionUpgrades||[])]);
     if(active.has('extra_fuel')) fuel += 50;
     if(active.has('max_ammo')) ammo = 100;
+    if(active.has('shield')) shield = 1;
     return {fuel, ammo, thrust, shield};
   }
 
