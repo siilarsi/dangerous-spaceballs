@@ -51,7 +51,8 @@
     this.orbSpeedMultiplier = 1;
 
     this.level = 1;
-    this.levelDuration = levelDurationMs;
+    const duration = window.levelDuration || 15000;
+    this.levelDuration = duration;
     this.startTime = null;
     this.nextLevelTime = null;
     this.levelBanner = document.getElementById('level-banner');
