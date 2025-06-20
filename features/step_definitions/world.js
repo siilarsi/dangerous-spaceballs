@@ -194,6 +194,8 @@ Then('no orbs should be visible', async () => {
   const count = await ctx.page.evaluate(() => window.gameScene.orbs.length);
   if (count !== 0) {
     throw new Error('Orb still visible');
+  }
+});
 
 When('I place the ship at {int} {int} with velocity {int} {int}', async (x, y, vx, vy) => {
   await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.ship);

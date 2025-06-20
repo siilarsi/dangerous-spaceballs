@@ -1,7 +1,7 @@
 (function(){
   const items = [
-    { id: 'max_ammo', name: 'Increase Max Ammo', desc: 'Raise your ammo cap to 100.', icon: '🔫', cost: 5, permanent: true },
-    { id: 'extra_fuel', name: 'Extra Starting Fuel', desc: 'Begin with additional fuel reserves.', icon: '⛽', cost: 3 },
+    { id: 'max_ammo', name: 'Increase Max Ammo', desc: 'Add 50 to your ammo limit.', icon: '🔫', cost: 5, permanent: true },
+    { id: 'extra_fuel', name: 'Extra Starting Fuel', desc: 'Add 50 fuel capacity.', icon: '⛽', cost: 3 },
     { id: 'fast_reload', name: 'Faster Reload', desc: 'Reduce time between shots.', icon: '⚡', cost: 4 },
     { id: 'shield', name: 'Temporary Shield', desc: 'Absorb the next hit you take.', icon: '🛡️', cost: 2, stock: 1 }
   ];
@@ -59,10 +59,8 @@
       storage.setCredits(window.totalCredits);
       document.querySelectorAll('.total-credits, #start-credits-value').forEach(el => { el.textContent = window.totalCredits; });
       if(item.permanent){
-        if(!window.permanentUpgrades.includes(item.id)){
-          window.permanentUpgrades.push(item.id);
-          storage.setPermanentUpgrades(window.permanentUpgrades);
-        }
+        window.permanentUpgrades.push(item.id);
+        storage.setPermanentUpgrades(window.permanentUpgrades);
       }else{
         window.sessionUpgrades.push(item.id);
         storage.setSessionUpgrades(window.sessionUpgrades);
