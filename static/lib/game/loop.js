@@ -24,6 +24,11 @@
     const noseAngle = this.ship.rotation - Math.PI / 2;
     const powerScale = Math.max(0.5, 1 - (this.level - 1) * 0.05);
 
+    const cos = Math.cos(this.ship.rotation);
+    const sin = Math.sin(this.ship.rotation);
+    const shipHitX = this.ship.x + this.shipBodyOffset.x * cos - this.shipBodyOffset.y * sin;
+    const shipHitY = this.ship.y + this.shipBodyOffset.x * sin + this.shipBodyOffset.y * cos;
+
 
     if (this.isFiring && this.ammo > 0 && time > this.lastFired + this.fireRate) {
         const angle = Phaser.Math.Angle.Between(this.ship.x, this.ship.y, this.reticle.x, this.reticle.y);
@@ -201,8 +206,8 @@
         }
         // Check ship collision
         const shipR = this.shipRadius;
-        const dx = this.ship.x - o.sprite.x;
-        const dy = this.ship.y - o.sprite.y;
+        const dx = shipHitX - o.sprite.x;
+        const dy = shipHitY - o.sprite.y;
         if (dx * dx + dy * dy <= (shipR + radius * o.sprite.scaleX) * (shipR + radius * o.sprite.scaleX)) {
             if (this.shield) {
                 this.shield = false;
@@ -242,8 +247,8 @@
             this.powerUps.splice(i, 1);
             continue;
         }
-        const dxP = this.ship.x - p.sprite.x;
-        const dyP = this.ship.y - p.sprite.y;
+        const dxP = shipHitX - p.sprite.x;
+        const dyP = shipHitY - p.sprite.y;
         if (dxP * dxP + dyP * dyP <= 28 * 28) {
             let label;
             if (p.type === 'ammo') {
@@ -332,8 +337,8 @@
     this.ship.y += this.velocity.y * deltaSeconds;
 
     for (let p of this.planets) {
-        const dxp = this.ship.x - p.sprite.x;
-        const dyp = this.ship.y - p.sprite.y;
+        const dxp = shipHitX - p.sprite.x;
+        const dyp = shipHitY - p.sprite.y;
         const shipR = this.shipRadius;
         if (dxp * dxp + dyp * dyp <= (shipR + p.radius) * (shipR + p.radius)) {
             if (this.shield) {
@@ -356,19 +361,19 @@
     const width = this.scale.width;
     const height = this.scale.height;
     const shipR = this.shipRadius;
-    if (this.ship.x - shipR < 0 && this.velocity.x < 0) {
+    if (shipHitX - shipR < 0 && this.velocity.x < 0) {
         this.velocity.x *= -1;
-        this.ship.x = shipR;
-    } else if (this.ship.x + shipR > width && this.velocity.x > 0) {
+        this.ship.x = shipR - this.shipBodyOffset.x;
+    } else if (shipHitX + shipR > width && this.velocity.x > 0) {
         this.velocity.x *= -1;
-        this.ship.x = width - shipR;
+        this.ship.x = width - shipR - this.shipBodyOffset.x;
     }
-    if (this.ship.y - shipR < 0 && this.velocity.y < 0) {
+    if (shipHitY - shipR < 0 && this.velocity.y < 0) {
         this.velocity.y *= -1;
-        this.ship.y = shipR;
-    } else if (this.ship.y + shipR > height && this.velocity.y > 0) {
+        this.ship.y = shipR - this.shipBodyOffset.y;
+    } else if (shipHitY + shipR > height && this.velocity.y > 0) {
         this.velocity.y *= -1;
-        this.ship.y = height - shipR;
+        this.ship.y = height - shipR - this.shipBodyOffset.y;
     }
 
     const fuelPct = Math.max(0, Math.min(100, this.fuel / this.maxFuel * 100));
@@ -403,7 +408,7 @@
         this.debugGraphics.clear();
         if (window.debugHitboxes) {
             this.debugGraphics.lineStyle(1, 0xff00ff, 0.6);
-            this.debugGraphics.strokeCircle(this.ship.x, this.ship.y, this.shipRadius);
+            this.debugGraphics.strokeCircle(shipHitX, shipHitY, this.shipRadius);
             for (const p of this.planets) {
                 this.debugGraphics.strokeCircle(p.sprite.x, p.sprite.y, p.radius);
             }
