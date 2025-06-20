@@ -122,3 +122,11 @@ Then('the game should not be over', async () => {
     throw new Error('Game unexpectedly over');
   }
 });
+
+Then('the debug overlay should be active', async () => {
+  await ctx.page.waitForFunction(() => window.gameScene);
+  const active = await ctx.page.evaluate(() => window.debugHitboxes === true);
+  if (!active) {
+    throw new Error('Debug overlay not active');
+  }
+});

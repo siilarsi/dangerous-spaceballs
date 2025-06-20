@@ -1,6 +1,11 @@
 (function(){
   function create() {
     window.gameScene = this;
+    this.debugGraphics = this.add.graphics();
+    this.debugGraphics.setDepth(1000);
+    this.input.keyboard.on('keydown-D', () => {
+        window.debugHitboxes = !window.debugHitboxes;
+    });
     // Create a slightly smaller ship using a polygon with an outline
     const shipPoints = [0, -20, 16, 16, 0, 8, -16, 16];
     this.ship = this.add.polygon(400, 300, shipPoints, 0x00ffff);

@@ -7,6 +7,11 @@ Given('I open the game page', async () => {
   await ctx.page.goto('file://' + filePath);
 });
 
+Given('I open the game page with debug enabled', async () => {
+  const filePath = path.resolve(__dirname, '../../index.html');
+  await ctx.page.goto('file://' + filePath + '?debug=1');
+});
+
 When('I click the start screen', async () => {
   await ctx.page.click('#start-screen');
 });
