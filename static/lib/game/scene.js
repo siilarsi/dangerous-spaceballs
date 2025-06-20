@@ -192,6 +192,24 @@
         this.reticle.y = pointer.y;
     });
 
+    // Trader ship controls
+    this.traderShip = null;
+    this.traderSpawnInterval = window.traderInterval || 20000;
+    this.nextTraderSpawn = this.traderSpawnInterval;
+    this.spawnTraderShip = (x, y, dir = 1) => {
+        if (this.traderShip) this.traderShip.destroy();
+        const container = this.add.container(x, y);
+        const body = this.add.rectangle(0, 0, 80, 30, 0x808080);
+        const cockpit = this.add.triangle(40 * dir, 0, 20 * dir, -15, 60 * dir, 0, 20 * dir, 15, 0xcccccc);
+        const flame = this.add.triangle(-50 * dir, 0, -10 * dir, -5, -20 * dir, 0, -10 * dir, 5, 0xffa500);
+        container.add([body, cockpit, flame]);
+        this.tweens.add({ targets: flame, scaleX: 1.5, yoyo: true, repeat: -1, duration: 300 });
+        container.dir = dir;
+        container.speed = 40;
+        this.traderShip = container;
+    };
+    window.spawnTraderShip = (x, y, dir) => this.spawnTraderShip(x, y, dir);
+
 }
   window.gameCreate = create;
 })();

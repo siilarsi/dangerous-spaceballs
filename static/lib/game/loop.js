@@ -310,6 +310,32 @@
         }
     }
 
+    if (!this.traderShip && time > this.nextTraderSpawn) {
+        const dir = Math.random() < 0.5 ? 1 : -1;
+        const y = Phaser.Math.Between(60, this.scale.height - 60);
+        const x = dir === 1 ? -60 : this.scale.width + 60;
+        this.spawnTraderShip(x, y, dir);
+    }
+    if (this.traderShip) {
+        this.traderShip.x += this.traderShip.speed * deltaSeconds * this.traderShip.dir;
+        const dx = this.ship.x - this.traderShip.x;
+        const dy = this.ship.y - this.traderShip.y;
+        if (dx * dx + dy * dy < 50 * 50) {
+            const angle = Math.atan2(dy, dx);
+            const force = 300;
+            this.velocity.x += Math.cos(angle) * force;
+            this.velocity.y += Math.sin(angle) * force;
+        }
+        if (
+            this.traderShip.x < -80 ||
+            this.traderShip.x > this.scale.width + 80
+        ) {
+            this.traderShip.destroy();
+            this.traderShip = null;
+            this.nextTraderSpawn = time + this.traderSpawnInterval;
+        }
+    }
+
     this.ship.x += this.velocity.x * deltaSeconds;
     this.ship.y += this.velocity.y * deltaSeconds;
 

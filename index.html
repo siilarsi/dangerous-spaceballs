@@ -6,7 +6,6 @@
     <title>Dangerous Spaceballs</title>
     <link rel="stylesheet" href="static/css/base.css">
     <link rel="stylesheet" href="static/css/components/start-screen.css">
-    <link rel="stylesheet" href="static/css/components/shop.css">
     <link rel="stylesheet" href="static/css/components/inventory.css">
     <link rel="stylesheet" href="static/css/components/overlays.css">
     <link rel="stylesheet" href="static/css/components/ui.css">
@@ -27,15 +26,6 @@
         </div>
         <div id="highscore-display">Your highscore: <span id="highscore-value">0</span></div>
         <div id="start-credits-display">Credits: <span id="start-credits-value">0</span></div>
-        <div id="shop-tab">Shop</div>
-        <div id="shop-panel">
-            <h2>Shop</h2>
-            <div id="shop-items"></div>
-            <div id="shop-credits">Credits: <span class="total-credits">0</span></div>
-            <div id="shop-footer">
-                <button id="close-shop">Close</button>
-            </div>
-        </div>
         <div id="inventory-panel">
             <h2>Ship Stats</h2>
             <ul>
@@ -68,7 +58,6 @@
     <script src="static/lib/audio.js"></script>
     <script src="static/lib/storage.js"></script>
     <script src="static/lib/stats.js"></script>
-    <script src="static/lib/shop.js"></script>
     <script src="static/lib/game/scene.js"></script>
     <script src="static/lib/game/loop.js"></script>
     <script>
@@ -76,6 +65,10 @@
         const ld = parseInt(params.get('levelDuration'));
         if (!isNaN(ld)) {
             window.levelDuration = ld;
+        }
+        const ti = parseInt(params.get('traderInterval'));
+        if (!isNaN(ti)) {
+            window.traderInterval = ti;
         }
     </script>
     <script src="static/lib/boot.js"></script>
