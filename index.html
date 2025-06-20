@@ -65,6 +65,11 @@
     </div>
     <script src="static/lib/phaser.min.js"></script>
     <script src="static/lib/audio.js"></script>
+    <script src="static/lib/storage.js"></script>
+    <script src="static/lib/stats.js"></script>
+    <script src="static/lib/shop.js"></script>
+    <script src="static/lib/game/scene.js"></script>
+    <script src="static/lib/game/loop.js"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         const ld = parseInt(params.get('levelDuration'));
@@ -72,6 +77,6 @@
             window.levelDuration = ld;
         }
     </script>
-    <script src="static/lib/main.js"></script>
+    <script src="static/lib/boot.js"></script>
 </body>
 </html>
