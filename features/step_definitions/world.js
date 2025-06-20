@@ -194,5 +194,34 @@ Then('no orbs should be visible', async () => {
   const count = await ctx.page.evaluate(() => window.gameScene.orbs.length);
   if (count !== 0) {
     throw new Error('Orb still visible');
+
+When('I place the ship at {int} {int} with velocity {int} {int}', async (x, y, vx, vy) => {
+  await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.ship);
+  await ctx.page.evaluate(({ x, y, vx, vy }) => {
+    const gs = window.gameScene;
+    gs.ship.x = x;
+    gs.ship.y = y;
+    gs.velocity.x = vx;
+    gs.velocity.y = vy;
+  }, { x, y, vx, vy });
+});
+
+Then('the ship x velocity should be positive', async () => {
+  await ctx.page.waitForFunction(() => window.gameScene && window.gameScene.velocity);
+  const vx = await ctx.page.evaluate(() => window.gameScene.velocity.x);
+  if (vx <= 0) {
+    throw new Error('Ship x velocity not positive');
+  }
+});
+
+Then('the ship should be within the screen bounds', async () => {
+  const pos = await ctx.page.evaluate(() => ({
+    x: window.gameScene.ship.x,
+    y: window.gameScene.ship.y,
+    w: window.gameScene.scale.width,
+    h: window.gameScene.scale.height
+  }));
+  if (pos.x < 0 || pos.x > pos.w || pos.y < 0 || pos.y > pos.h) {
+    throw new Error('Ship out of bounds');
   }
 });
