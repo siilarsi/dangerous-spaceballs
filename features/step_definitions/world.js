@@ -381,3 +381,23 @@ Then('the power-up should have moved', async () => {
     throw new Error('Power-up did not move');
   }
 });
+
+Then('the power-up orbit radius should be {int}', async expected => {
+  await ctx.page.waitForFunction(() => {
+    return (
+      window.gameScene &&
+      window.gameScene.powerUps.length > 0 &&
+      window.gameScene.planets.length > 0
+    );
+  });
+  const radius = await ctx.page.evaluate(() => {
+    const p = window.gameScene.powerUps[0];
+    const center = window.gameScene.powerUpOrbitCenter || window.gameScene.planets[0].sprite;
+    const dx = p.sprite.x - center.x;
+    const dy = p.sprite.y - center.y;
+    return Math.round(Math.hypot(dx, dy));
+  });
+  if (Math.abs(radius - expected) > 5) {
+    throw new Error(`Expected power-up orbit radius ~${expected} but got ${radius}`);
+  }
+});

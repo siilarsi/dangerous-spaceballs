@@ -75,6 +75,8 @@
     this.planets = [];
     // Reduce gravitational pull slightly for smoother maneuvers
     this.gravityStrength = 2000;
+    // Lower falloff exponent to let gravity influence objects from farther away
+    this.gravityFalloff = 0.9;
     const pr = 120;
     const atmoRadius = pr * 1.5;
     const margin = atmoRadius + 20;
@@ -107,7 +109,8 @@
 
     // Power-up orbit parameters
     this.powerUpOrbitCenter = planet;
-    this.powerUpOrbitRadius = pr + 60;
+    // Slightly widen the power-up orbit for easier interception
+    this.powerUpOrbitRadius = pr + 90;
     this.powerUpAngularSpeed = 0.25; // radians per second
     this.powerUpOrbitDir = Math.random() < 0.5 ? 1 : -1;
 
